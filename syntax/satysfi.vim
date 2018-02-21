@@ -141,8 +141,8 @@ syn match satysfiMathIdentifier "[a-zA-Z0-9]" contained
 " Bind mode-specific names to mode-agnostic names
 hi def link satysfiProgKeyword satysfiKeyword
 hi def link satysfiProgOperator satysfiOperator
-hi def link satysfiHorzOperator Operator
-hi def link satysfiMathOperator Operator
+hi def link satysfiHorzOperator satysfiOperator
+hi def link satysfiMathOperator satysfiOperator
 
 " Now we can link them with predefined groups.
 hi def link satysfiKeyword Keyword
