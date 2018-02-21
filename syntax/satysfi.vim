@@ -138,6 +138,20 @@ syn match satysfiMathOperator "[-+*/:=<>~'.,?`]\+" contained
 syn match satysfiMathIdentifier "[a-zA-Z0-9]" contained
 
 
+" Sync heuristics
+" TODO: conditionally disable it once bracket errors are implemented
+" TODO: highlight stray close-brackets
+" let seems to be a prog start
+syn sync match satysfiSync grouphere NONE "^\%(let\)\@="
+" `] seems to be the end of a literal
+syn sync match satysfiSync grouphere NONE "`[]}>)]"
+" +command{ seems to be a vert start
+syn region satysfiSyncVert contained start="" end=">" contains=@satysfiVert
+syn sync match satysfiSync grouphere satysfiSyncVert "^\s*\%(+[a-zA-Z][-a-zA-Z0-9.]*\s*[[({<?]\)\@="
+
+syn sync minlines=100
+
+
 " Bind mode-specific names to mode-agnostic names
 hi def link satysfiProgKeyword satysfiKeyword
 hi def link satysfiProgOperator satysfiOperator
