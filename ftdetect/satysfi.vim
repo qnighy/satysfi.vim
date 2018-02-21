@@ -1,2 +1,1 @@
-autocmd BufRead,BufNewFile *.saty setlocal filetype=satysfi
-autocmd BufRead,BufNewFile *.satyh setlocal filetype=satysfi
+autocmd BufRead,BufNewFile *.saty,*.satyh setlocal filetype=satysfi
