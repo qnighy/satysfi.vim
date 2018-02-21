@@ -10,4 +10,4 @@ Dual-license under Apache-2.0 and MIT Licenses.
 
 ![Screenshot of `demo.saty`](img/screenshot1.png?raw=true)
 
-![Screenshot of `local.satyh`](img/screenshot1.png?raw=true)
+![Screenshot of `local.satyh`](img/screenshot2.png?raw=true)
