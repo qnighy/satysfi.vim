@@ -1,5 +1,5 @@
 " Vim syntax file
-" Language:     SATySFi Grammar File
+" Language:     SATySFi
 " Author:       Masaki Hara <ackie.h.gmai@gmail.com>
 " Date:         February 20, 2018
 " File Types:   satysfi
@@ -116,14 +116,14 @@ syn region satysfiBracesBang contained matchgroup=satysfiKeyword start="!{" matc
 
 
 " Vertical mode
-syn cluster satysfiVert contains=satysfiComment,satysfiHashVariable,satysfiVertInvoke,satysfiAngle,satysfiBraces
-syn region satysfiVertInvoke contained transparent matchgroup=satysfiCommandVert start="+\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" matchgroup=satysfiKeyword end=";\|[}>]\@<=" contains=@satysfiActv
+syn cluster satysfiVert contains=satysfiComment,satysfiVertInvoke,satysfiAngle,satysfiBraces
+syn region satysfiVertInvoke contained transparent matchgroup=satysfiCommandVert start="[+#]\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" matchgroup=satysfiKeyword end=";\|[}>]\@<=" contains=@satysfiActv
 
 
 " Horizontal mode
-syn cluster satysfiHorz contains=satysfiComment,satysfiHashVariable,satysfiHorzInvoke,satysfiAngle,satysfiBraces,satysfiDollarBraces,satysfiHorzOperator,satysfiEscape,satysfiLiteral
+syn cluster satysfiHorz contains=satysfiComment,satysfiHorzInvoke,satysfiAngle,satysfiBraces,satysfiDollarBraces,satysfiHorzOperator,satysfiEscape,satysfiLiteral
 
-syn region satysfiHorzInvoke contained transparent matchgroup=satysfiCommandHorz start="\\\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" matchgroup=satysfiKeyword end=";\|[}>]\@<=" contains=@satysfiActv
+syn region satysfiHorzInvoke contained transparent matchgroup=satysfiCommandHorz start="[\\#]\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" matchgroup=satysfiKeyword end=";\|[}>]\@<=" contains=@satysfiActv
 
 syn match satysfiHorzOperator "|" contained
 syn match satysfiHorzOperator "\*\+" contained
