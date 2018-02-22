@@ -117,25 +117,30 @@ syn region satysfiBracesBang contained matchgroup=satysfiKeyword start="!{" matc
 
 " Vertical mode
 syn cluster satysfiVert contains=satysfiComment,satysfiVertInvoke,satysfiAngle,satysfiBraces
-syn region satysfiVertInvoke contained transparent matchgroup=satysfiCommandVert start="[+#]\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" matchgroup=satysfiKeyword end=";\|[}>]\@<=" contains=@satysfiActv
+syn region satysfiVertInvoke contained transparent matchgroup=satysfiCommand start="[+#]\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" matchgroup=satysfiKeyword end=";\|[}>]\@<=" contains=@satysfiActv
+syn region satysfiVertInvoke contained transparent matchgroup=satysfiCommandSection start="\%(+section\|+subsection\)\>" matchgroup=satysfiKeyword end=";\|[}>]\@<=" contains=@satysfiActv
+syn region satysfiVertInvoke contained transparent matchgroup=satysfiCommandKnown start="+\%(p\|pn\|listing\|math\)\>" matchgroup=satysfiKeyword end=";\|[}>]\@<=" contains=@satysfiActv
 
 
 " Horizontal mode
 syn cluster satysfiHorz contains=satysfiComment,satysfiHorzInvoke,satysfiAngle,satysfiBraces,satysfiDollarBraces,satysfiHorzOperator,satysfiEscape,satysfiLiteral
 
-syn region satysfiHorzInvoke contained transparent matchgroup=satysfiCommandHorz start="[\\#]\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" matchgroup=satysfiKeyword end=";\|[}>]\@<=" contains=@satysfiActv
+syn region satysfiHorzInvoke contained transparent matchgroup=satysfiCommand start="[\\#]\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" matchgroup=satysfiKeyword end=";\|[}>]\@<=" contains=@satysfiActv
+syn region satysfiHorzInvoke contained transparent matchgroup=satysfiCommandKnown start="\\\%(SATySFi\|LaTeX\|TeX\|ref\|figure\|tabular\)\>" matchgroup=satysfiKeyword end=";\|[}>]\@<=" contains=@satysfiActv
+syn region satysfiHorzInvoke contained transparent matchgroup=satysfiCommandStyle start="\\\%(emph\)\>" matchgroup=satysfiKeyword end=";\|[}>]\@<=" contains=@satysfiActv
 
 syn match satysfiHorzOperator "|" contained
 syn match satysfiHorzOperator "\*\+" contained
 
 
 " Math mode
-syn cluster satysfiMath contains=satysfiComment,satysfiHashVariable,satysfiEscape,satysfiCommandHorz,satysfiAngleBang,satysfiBracesBang,satysfiMathBraces,satysfiProgEnclBang,satysfiMathOperator,satysfiMathIdentifier
+syn cluster satysfiMath contains=satysfiComment,satysfiHashVariable,satysfiEscape,satysfiCommandHorz,satysfiAngleBang,satysfiBracesBang,satysfiMathBraces,satysfiProgEnclBang,satysfiMathOperator,satysfiMathIdentifier,satysfiMathCommandKnown
 
 syn match satysfiMathOperator "\^" contained
 syn match satysfiMathOperator "_" contained
 syn match satysfiMathOperator "[-+*/:=<>~'.,?`]\+" contained
 syn match satysfiMathIdentifier "[a-zA-Z0-9]" contained
+syn match satysfiMathCommandKnown "\\\%(int\|sqrt\|frac\|upper\|lower\|sum\|lim\|to\|paren\|brace\|pi\|infty\)\>" contained
 
 
 " Sync heuristics
@@ -155,8 +160,11 @@ syn sync minlines=100
 " Bind mode-specific names to mode-agnostic names
 hi def link satysfiProgKeyword satysfiKeyword
 hi def link satysfiProgOperator satysfiOperator
+hi def link satysfiCommandVert satysfiCommand
+hi def link satysfiCommandHorz satysfiCommand
 hi def link satysfiHorzOperator satysfiOperator
 hi def link satysfiMathOperator satysfiOperator
+hi def link satysfiMathCommandKnown satysfiCommandKnown
 
 " Now we can link them with predefined groups.
 hi def link satysfiKeyword Keyword
@@ -168,9 +176,12 @@ hi def link satysfiOperator Keyword
 hi def link satysfiArgControl Keyword
 hi def link satysfiModulePrefix Include
 hi def link satysfiLiteral String
-hi def link satysfiHashVariable Special
-hi def link satysfiCommandVert Special
-hi def link satysfiCommandHorz Special
+hi def link satysfiHashVariable Identifier
+hi def link satysfiCommand Identifier
+hi def link satysfiCommandSection PreCondit
+hi def link satysfiCommandKnown Statement
+hi def link satysfiCommandStyle Type
+hi def link satysfiEscape Special
 hi def link satysfiComment Comment
 hi def link satysfiKnownPackage Special
 
