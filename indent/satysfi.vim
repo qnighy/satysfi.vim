@@ -30,10 +30,12 @@ let s:ignorepat_for_prog = 'synIDattr(synID(line("."), col("."), 0), "name") !~ 
 let s:ignorepat_op = 'synIDattr(synID(line("."), col("."), 0), "name") =~ "Comment\\|Literal\\|Operator"'
 
 " Expr delimiters to ignore
-" [], (), match-with, let*-in, while-do, if-else, fun-->
+" [], (), match-with, let*-in, while-do, if-else
 " s:ignorepat can ignore {}, ${}, and '<>, so omit them here
-let s:exprbegin = '\%([([]\|\<\%(match\|let\|let-rec\|let-mutable\|let-inline\|let-block\|let-math\|while\|if\|fun\)\>\)'
-let s:exprend = '\%([])]\|->\|\<\%(with\|in\|do\|else\)\>\)'
+let s:exprbegin = '\%([([]\|\<\%(match\|let\|let-rec\|let-mutable\|let-inline\|let-block\|let-math\|while\|if\)\>\)'
+let s:exprend = '\%([])]\|\<\%(with\|in\|do\|else\)\>\)'
+let s:exprbegin_womatch = '\%([([]\|\<\%(let\|let-rec\|let-mutable\|let-inline\|let-block\|let-math\|while\|if\)\>\)'
+let s:exprend_womatch = '\%([])]\|\<\%(in\|do\|else\)\>\)'
 
 " Module delimiters to ignore
 " sig-end, struct-end
@@ -151,7 +153,7 @@ function! s:ProgIndent()
     return s:FindPairProg('\<\%(let\|let-block\|let-inline\|let-math\|let-mutable\|let-rec\)\>', '', '\<in\>')
   elseif line =~ '^\s*|' && line !~ '^\s*|)'
     " type or match
-    let up_lpos = searchpair(s:exprbegin, '^\s*\<type\>\|\<match\>\|^\s*|', s:exprend, 'bWn', s:ignorepat_for_prog)
+    let up_lpos = searchpair(s:exprbegin_womatch, '^\s*\<type\>\|\<match\>\|^\s*|', s:exprend_womatch, 'bWn', s:ignorepat_for_prog)
     let up_line = getline(up_lpos)
     let up_indent = indent(up_lpos)
     if up_line =~ '^\s*\<type\>'
