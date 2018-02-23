@@ -30,7 +30,7 @@ if exists("*GetSATySFiIndent")
 endif
 
 " Ignoring patterns
-let s:ignore_for_prog = 'synIDattr(synID(line("."), col("."), 0), "name") =~? "literal\\|comment"'
+let s:ignore_for_prog = 'synIDattr(synID(line("."), col("."), 0), "name") !~ "satysfiProg"'
 
 " Indent pairs
 function! s:FindPair(pstart, pmid, pend)
@@ -41,7 +41,7 @@ function! s:FindPairBefore(pstart, pmid, pend)
   return indent(searchpair(a:pstart, a:pmid, a:pend, 'bWn', s:ignore_for_prog))
 endfunction
 
-function! GetSATySFiIndent()
+function! s:ProgIndent()
   " Search for the previous non-empty line
   " Lines starting with |> are also ignored
   call cursor(v:lnum, 1)
@@ -123,6 +123,33 @@ function! GetSATySFiIndent()
     return s:FindPair('\[', '', '\]')
   else
     return lindent + shiftwidth()
+  endif
+  return -1
+endfunction
+
+function! s:VertIndent()
+  return -1
+endfunction
+
+function! s:HorzIndent()
+  return -1
+endfunction
+
+function! s:MathIndent()
+  return -1
+endfunction
+
+function! GetSATySFiIndent()
+  call cursor(v:lnum, 1)
+  let synname = synIDattr(synID(line("."), col("."), 0), "name")
+  if synname =~ '^satysfiProg' || synname == ''
+    return s:ProgIndent()
+  elseif synname =~ '^satysfiVert'
+    return s:VertIndent()
+  elseif synname =~ '^satysfiHorz'
+    return s:HorzIndent()
+  elseif synname =~ '^satysfiMath'
+    return s:MathIndent()
   endif
   return -1
 endfunction
