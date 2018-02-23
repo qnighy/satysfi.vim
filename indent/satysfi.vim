@@ -35,6 +35,11 @@ let s:ignorepat_op = 'synIDattr(synID(line("."), col("."), 0), "name") =~ "Comme
 let s:exprbegin = '\%([([]\|\<\%(match\|let\|let-rec\|let-mutable\|let-inline\|let-block\|let-math\|while\|if\|fun\)\>\)'
 let s:exprend = '\%([])]\|->\|\<\%(with\|in\|do\|else\)\>\)'
 
+" Module delimiters to ignore
+" sig-end, struct-end
+let s:modbegin = '\<\%(sig\|struct\)\>'
+let s:modend = '\<end\>'
+
 " Indent pairs
 function! s:FindPair(pstart, pmid, pend)
   call search(a:pend, 'cW')
@@ -60,7 +65,6 @@ function! s:ProgIndent()
   " Lines starting with |> are also ignored
   call cursor(v:lnum, 1)
   let llnum = search('^\s*\%(|>\)\@![^ \t\r\n%]', 'bWn')
-  call cursor(v:lnum, 1)
   if llnum == 0
     " 0 indent at the top
     return 0
@@ -81,8 +85,19 @@ function! s:ProgIndent()
     let lindent = lindent + strlen(matchlist(lline, '^\s*\(|\s*\)')[1])
   endif
 
+  " Find module indentation
+  let modindent = 0
+  call cursor(v:lnum, 1)
+  let modlpos = searchpair(s:modbegin, '\<\%(sig\|struct\)\>', s:modend, 'bWn', s:ignorepat_for_prog)
+  if modlpos > 0
+    let modindent = indent(modlpos) + shiftwidth()
+  endif
+
   " Current line
   let line = getline(v:lnum)
+
+  " Do indentation by constructions
+  call cursor(v:lnum, 1)
   if line =~ '^\s*\%(let\|let-block\|let-inline\|let-math\|let-mutable\|let-rec\)\>'
     " It is either a let-in or a toplevel/module-level let.
     if lline =~ '\<in\s*$'
@@ -93,16 +108,14 @@ function! s:ProgIndent()
       return lindent + shiftwidth()
     elseif lline =~ '\%([a-zA-Z][-a-zA-Z0-9]*\|[0-9]\+\.\?\|[])}`]\)\s*$'
       " Seems to be the toplevel let
-      " TODO: deal with modules
-      return 0
+      return modindent
     else
       " Seems to be let-in
       return lindent + shiftwidth()
     endif
   elseif line =~ '^\s*type\>'
     " Toplevel or module-level type
-    " TODO: deal with modules
-    return 0
+    return modindent
   elseif line =~ '^\s*and\>'
     " let-rec/and or type/and
     " TODO: deal with paths
@@ -111,13 +124,14 @@ function! s:ProgIndent()
     if let_line >= type_line
       return s:FindPairBeforeProg('\<\%(let\|let-block\|let-inline\|let-math\|let-mutable\|let-rec\)\>', '', '\<in\>')
     else
-      " TODO: deal with modules
-      return 0
+      return modindent
     endif
+  elseif line =~ '^\s*direct\>'
+    " Module-level direct declaration
+    return modindent
   elseif line =~ '^\s*module\>'
     " Toplevel or module-level module definition
-    " TODO: deal with modules
-    return 0
+    return modindent
   elseif line =~ '^\s*do\>'
     " while-do
     return s:FindPairProg('\<while\>', '', '\<do\>')
@@ -151,6 +165,8 @@ function! s:ProgIndent()
       " unknown
       return -1
     endif
+  elseif line =~ '^\s*end'
+    return s:FindPair(s:modbegin, '', s:modend)
   elseif line =~ '^\s*)'
     return s:FindPair('(', '', ')')
   elseif line =~ '^\s*|)'
