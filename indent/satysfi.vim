@@ -31,21 +31,21 @@ let s:ignorepat_op = 'synIDattr(synID(line("."), col("."), 0), "name") =~ "Comme
 
 " Indent pairs
 function! s:FindPair(pstart, pmid, pend)
-  call search(a:pend, 'W')
+  call search(a:pend, 'cW')
   return indent(searchpair(a:pstart, a:pmid, a:pend, 'bWn', s:ignorepat))
 endfunction
 function! s:FindPairBefore(pstart, pmid, pend)
   return indent(searchpair(a:pstart, a:pmid, a:pend, 'bWn', s:ignorepat))
 endfunction
 function! s:FindPairProg(pstart, pmid, pend)
-  call search(a:pend, 'W')
+  call search(a:pend, 'cW')
   return indent(searchpair(a:pstart, a:pmid, a:pend, 'bWn', s:ignorepat_for_prog))
 endfunction
 function! s:FindPairBeforeProg(pstart, pmid, pend)
   return indent(searchpair(a:pstart, a:pmid, a:pend, 'bWn', s:ignorepat_for_prog))
 endfunction
 function! s:FindPairSkipOp(pstart, pmid, pend)
-  call search(a:pend, 'W')
+  call search(a:pend, 'cW')
   return indent(searchpair(a:pstart, a:pmid, a:pend, 'bWn', s:ignorepat_op))
 endfunction
 
@@ -79,7 +79,7 @@ function! s:ProgIndent()
     elseif lline =~ '\<\%(not\|mod\|if\|then\|else\|let\|let-rec\|and\|fun\|before\|while\|do\|let-mutable\|match\|with\|when\|as\|type\|of\|module\|struct\|sig\|val\|direct\|constraint\|let-inline\|let-block\|let-math\|controls\|command\)\s*$'
       " Seems to be let-in
       return lindent + shiftwidth()
-    elseif lline =~ '\%([a-zA-Z][-a-zA-Z0-9]*\|[0-9]\+\.\?\|[])}`]\|\S>\)\s*$'
+    elseif lline =~ '\%([a-zA-Z][-a-zA-Z0-9]*\|[0-9]\+\.\?\|[])}`]\)\s*$'
       " Seems to be the toplevel let
       " TODO: deal with modules
       return 0
@@ -201,7 +201,6 @@ function! s:HorzIndent()
     let lblnum = search('^\s*\%(\*\{' . (numbullet + 1) . '}\)\@!\*', 'bWn')
     let lbindent = indent(lblnum)
     let lbline = getline(lblnum)
-    " echo "numbullet = " . numbullet . ", lblnum = " . lblnum . ", lbindent = " . lbindent . ", lbline = " . lbline
     if lbline !~ '^\s*\*'
       return -1
     endif
