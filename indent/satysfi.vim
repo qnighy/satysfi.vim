@@ -151,7 +151,7 @@ function! s:ProgIndent()
     return match(lline, '|>')
   elseif line =~ '^\s*in\>'
     return s:FindPairProg('\<\%(let\|let-block\|let-inline\|let-math\|let-mutable\|let-rec\)\>', '', '\<in\>')
-  elseif line =~ '^\s*|' && line !~ '^\s*|)'
+  elseif line =~ '^\s*|' && line !~ '^\s*|)' && line !~ '^\s*|>'
     " type or match
     let up_lpos = searchpair(s:exprbegin_womatch, '^\s*\<type\>\|\<match\>\|^\s*|', s:exprend_womatch, 'bWn', s:ignorepat_for_prog)
     let up_line = getline(up_lpos)
