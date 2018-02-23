@@ -20,9 +20,9 @@ setlocal nolisp
 setlocal nosmartindent
 
 " Only define the function once.
-" if exists("*GetSATySFiIndent")
-"  finish
-" endif
+if exists("*GetSATySFiIndent")
+ finish
+endif
 
 " Ignoring patterns
 let s:ignorepat = 'synIDattr(synID(line("."), col("."), 0), "name") =~ "Comment\\|Literal"'
