@@ -148,7 +148,7 @@ syn region satysfiProgFromHorz contained matchgroup=satysfiHorzKeyword start="(|
 syn region satysfiProgFromHorz contained matchgroup=satysfiHorzKeyword start="\[" matchgroup=satysfiProgKeyword end="\]" contains=@satysfiProg
 syn region satysfiVertFromHorz contained matchgroup=satysfiHorzKeyword start="<" matchgroup=satysfiVertKeyword end=">" contains=@satysfiVert
 syn region satysfiHorzEncl contained matchgroup=satysfiHorzKeyword start="{" matchgroup=satysfiHorzKeyword end="}" contains=@satysfiHorz
-syn region satysfiMathFromHorz contained matchgroup=satysfiHorzKeyword start="{" matchgroup=satysfiMathKeyword end="}" contains=@satysfiMath
+syn region satysfiMathFromHorz contained matchgroup=satysfiHorzKeyword start="\${" matchgroup=satysfiMathKeyword end="}" contains=@satysfiMath
 
 
 
