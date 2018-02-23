@@ -29,6 +29,12 @@ let s:ignorepat = 'synIDattr(synID(line("."), col("."), 0), "name") =~ "Comment\
 let s:ignorepat_for_prog = 'synIDattr(synID(line("."), col("."), 0), "name") !~ "^\\%(satysfiProg\\|$\\)"'
 let s:ignorepat_op = 'synIDattr(synID(line("."), col("."), 0), "name") =~ "Comment\\|Literal\\|Operator"'
 
+" Expr delimiters to ignore
+" [], (), match-with, let*-in, while-do, if-else, fun-->
+" s:ignorepat can ignore {}, ${}, and '<>, so omit them here
+let s:exprbegin = '\%([([]\|\<\%(match\|let\|let-rec\|let-mutable\|let-inline\|let-block\|let-math\|while\|if\|fun\)\>\)'
+let s:exprend = '\%([])]\|->\|\<\%(with\|in\|do\|else\)\>\)'
+
 " Indent pairs
 function! s:FindPair(pstart, pmid, pend)
   call search(a:pend, 'cW')
@@ -131,7 +137,7 @@ function! s:ProgIndent()
     return s:FindPairProg('\<\%(let\|let-block\|let-inline\|let-math\|let-mutable\|let-rec\)\>', '', '\<in\>')
   elseif line =~ '^\s*|' && line !~ '^\s*|)'
     " type or match
-    let up_lpos = searchpair('[([]', '^\s*\<type\>\|\<match\>\|^\s*|', '[])]', 'bWn', s:ignorepat_for_prog)
+    let up_lpos = searchpair(s:exprbegin, '^\s*\<type\>\|\<match\>\|^\s*|', s:exprend, 'bWn', s:ignorepat_for_prog)
     let up_line = getline(up_lpos)
     let up_indent = indent(up_lpos)
     if up_line =~ '^\s*\<type\>'
