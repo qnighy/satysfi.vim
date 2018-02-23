@@ -27,6 +27,7 @@ setlocal nosmartindent
 " Ignoring patterns
 let s:ignorepat = 'synIDattr(synID(line("."), col("."), 0), "name") =~ "Comment\\|Literal"'
 let s:ignorepat_for_prog = 'synIDattr(synID(line("."), col("."), 0), "name") !~ "^\\%(satysfiProg\\|$\\)"'
+let s:ignorepat_op = 'synIDattr(synID(line("."), col("."), 0), "name") =~ "Comment\\|Literal\\|Operator"'
 
 " Indent pairs
 function! s:FindPair(pstart, pmid, pend)
@@ -42,6 +43,10 @@ function! s:FindPairProg(pstart, pmid, pend)
 endfunction
 function! s:FindPairBeforeProg(pstart, pmid, pend)
   return indent(searchpair(a:pstart, a:pmid, a:pend, 'bWn', s:ignorepat_for_prog))
+endfunction
+function! s:FindPairSkipOp(pstart, pmid, pend)
+  call search(a:pend, 'W')
+  return indent(searchpair(a:pstart, a:pmid, a:pend, 'bWn', s:ignorepat_op))
 endfunction
 
 function! s:ProgIndent()
@@ -138,6 +143,29 @@ function! s:ProgIndent()
 endfunction
 
 function! s:VertIndent()
+  " Search for the previous non-empty line
+  call cursor(v:lnum, 1)
+  let llnum = search('^\s*[^ \t\r\n%]', 'bWn')
+  call cursor(v:lnum, 1)
+  if llnum == 0
+    " 0 indent at the top
+    return 0
+  endif
+
+  " Previous line and its indentation
+  let lline = substitute(getline(llnum), '%.*', '', '')
+  let lindent = indent(llnum)
+
+  " Current line
+  let line = getline(v:lnum)
+
+  if line =~ '^\s*>'
+    return s:FindPairSkipOp('<', '', '>')
+  elseif lline =~ '<\s*$'
+    return lindent + shiftwidth()
+  else
+    return lindent
+  endif
   return -1
 endfunction
 
