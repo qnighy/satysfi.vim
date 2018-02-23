@@ -15,7 +15,7 @@ let b:did_indent = 1
 setlocal nocindent
 setlocal expandtab
 setlocal indentexpr=GetSATySFiIndent()
-setlocal indentkeys+=0=and,0=constraint,0=else,0=end,0=if,0=in,0=let,0=let-block,0=let-inline,0=let-math,0=let-mutable,0=let-rec,0=then,0=type,0=val,0=with,0=\|>,0\|,0},0],0),0<>>,0*,0=**,0=***,0=****,0=*****,0=******,0=*******
+setlocal indentkeys+=0=and,0=constraint,0=else,0=end,0=if,0=in,0=let,0=let-block,0=let-inline,0=let-math,0=let-mutable,0=let-rec,0=then,0=type,0=val,0=with,0=\|>,0\|,0},0],0=]>,0),0=\|),0<>>,0*,0=**,0=***,0=****,0=*****,0=******,0=*******
 setlocal nolisp
 setlocal nosmartindent
 
@@ -118,12 +118,19 @@ function! s:ProgIndent()
     return match(lline, '|>')
   elseif line =~ '^\s*in\>'
     return s:FindPairProg('\<\%(let\|let-block\|let-inline\|let-math\|let-mutable\|let-rec\)\>', '', '\<in\>')
-  elseif line =~ '^\s*|'
+  elseif line =~ '^\s*|' && line !~ '^\s*|)'
     return lindent
   elseif line =~ '^\s*)'
     return s:FindPair('(', '', ')')
+  elseif line =~ '^\s*|)'
+    return s:FindPair('(|', '', '|)')
   elseif line =~ '^\s*]'
     return s:FindPair('\[', '', '\]')
+  elseif line =~ '^\s*]>'
+    return s:FindPair('<\[', '', '\]>')
+  elseif lline =~ '[;,]\s*$'
+    " Seems to be in a listy thing. Align same
+    return lindent
   else
     return lindent + shiftwidth()
   endif
