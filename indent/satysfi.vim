@@ -29,11 +29,16 @@ if exists("*GetSATySFiIndent")
  finish
 endif
 
+" Ignoring patterns
+let s:ignore_for_prog = 'synIDattr(synID(line("."), col("."), 0), "name") =~? "literal\\|comment"'
+
 " Indent pairs
 function! s:FindPair(pstart, pmid, pend)
- call search(a:pend, 'W')
- " return indent(searchpair(a:pstart, a:pmid, a:pend, 'bWn', 'synIDattr(synID(line("."), col("."), 0), "name") =~? "literal\\|comment"'))
- return indent(searchpair(a:pstart, a:pmid, a:pend, 'bWn'))
+  call search(a:pend, 'W')
+  return indent(searchpair(a:pstart, a:pmid, a:pend, 'bWn', s:ignore_for_prog))
+endfunction
+function! s:FindPairBefore(pstart, pmid, pend)
+  return indent(searchpair(a:pstart, a:pmid, a:pend, 'bWn', s:ignore_for_prog))
 endfunction
 
 function! GetSATySFiIndent()
@@ -59,6 +64,7 @@ function! GetSATySFiIndent()
   " Current line
   let line = getline(v:lnum)
   if line =~ '^\s*\%(let\|let-block\|let-inline\|let-math\|let-mutable\|let-rec\)\>'
+    " It is either a let-in or a toplevel/module-level let.
     if lline =~ '\<in\s*$'
       " Align let-ins same
       return lindent
@@ -67,11 +73,43 @@ function! GetSATySFiIndent()
       return lindent + shiftwidth()
     elseif lline =~ '\%([a-zA-Z][-a-zA-Z0-9]*\|[0-9]\+\.\?\|[])}`]\|\S>\)\s*$'
       " Seems to be the toplevel let
+      " TODO: deal with modules
       return 0
     else
       " Seems to be let-in
       return lindent + shiftwidth()
     endif
+  elseif line =~ '^\s*type\>'
+    " Toplevel or module-level type
+    " TODO: deal with modules
+    return 0
+  elseif line =~ '^\s*and\>'
+    " let-rec/and or type/and
+    " TODO: deal with paths
+    let let_line = search('\<\%(let\|let-block\|let-inline\|let-math\|let-mutable\|let-rec\)\>', 'bWn')
+    let type_line = search('\<type\>', 'bWn')
+    if let_line >= type_line
+      return s:FindPairBefore('\<\%(let\|let-block\|let-inline\|let-math\|let-mutable\|let-rec\)\>', '', '\<in\>')
+    else
+      " TODO: deal with modules
+      return 0
+    endif
+  elseif line =~ '^\s*module\>'
+    " Toplevel or module-level module definition
+    " TODO: deal with modules
+    return 0
+  elseif line =~ '^\s*do\>'
+    " while-do
+    return s:FindPair('\<while\>', '', '\<do\>')
+  elseif line =~ '^\s*then\>'
+    " if-then-else
+    return s:FindPairBefore('\<if\>', '', '\<else\>')
+  elseif line =~ '^\s*else\>'
+    " if-then-else
+    return s:FindPair('\<if\>', '', '\<else\>')
+  elseif line =~ '^\s*->'
+    " fun ->
+    return s:FindPair('\<fun\>', '', '->')
   elseif line =~ '^\s*|>' && lline =~ '|>'
     " Align |> same
     return match(lline, '|>')
@@ -86,22 +124,5 @@ function! GetSATySFiIndent()
   else
     return lindent + shiftwidth()
   endif
-  " if line =~ '^\s*|>' && lline =~ ' |> '
-  "   return match(lline, ' |> ') + 1
-  " elseif line =~ '^\s*| '
-  "   return lindent
-  " elseif line =~ '^\s*@\%(require\|import\):'
-  "   return 0
-  " elseif lline =~ '=\s*$'
-  "   return lindent + shiftwidth()
-  " elseif lline =~ '\<in\s*$'
-  "   if line =~ '^\s*\%(let\|let-block\|let-inline\|let-math\|let-mutable\|let-rec\|match\)\>'
-  "     return lindent
-  "   else
-  "     return lindent + shiftwidth()
-  "   endif
-  " else
-  "   return lindent + shiftwidth()
-  " endif
   return -1
 endfunction
