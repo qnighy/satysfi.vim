@@ -128,8 +128,8 @@ function! s:ProgIndent()
     else
       return modindent
     endif
-  elseif line =~ '^\s*direct\>'
-    " Module-level direct declaration
+  elseif line =~ '^\s*\%(direct\|val\)\>'
+    " Module-level direct/val declaration
     return modindent
   elseif line =~ '^\s*module\>'
     " Toplevel or module-level module definition
