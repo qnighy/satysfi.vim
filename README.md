@@ -2,14 +2,6 @@
 
 This is a Vim plugin which provides syntax highlighting and indentation functionality for [`SATySFi`](https://github.com/gfngfn/SATySFi/) programs/documents.
 
-# How to enable indentation
-
-Indentation is disabled by default for now, as it is experimental.
-
-```vim
-let g:satysfi_indent=1
-```
-
 # License
 
 Dual-license under Apache-2.0 and MIT Licenses.

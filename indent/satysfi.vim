@@ -6,11 +6,6 @@
 " Version:      1
 " Notes:
 
-" This indent file is experimental under g:satysfi_indent.
-if !exists("g:satysfi_indent") || g:satysfi_indent == 0
- finish
-endif
-
 " Only load this indent file when no other was loaded.
 if exists("b:did_indent")
   finish
