@@ -15,25 +15,33 @@ let b:did_indent = 1
 setlocal nocindent
 setlocal expandtab
 setlocal indentexpr=GetSATySFiIndent()
-setlocal indentkeys+=0=and,0=constraint,0=else,0=end,0=if,0=in,0=let,0=let-block,0=let-inline,0=let-math,0=let-mutable,0=let-rec,0=then,0=type,0=val,0=with,0=\|>,0\|,0},0],0),0<>>
+setlocal indentkeys+=0=and,0=constraint,0=else,0=end,0=if,0=in,0=let,0=let-block,0=let-inline,0=let-math,0=let-mutable,0=let-rec,0=then,0=type,0=val,0=with,0=\|>,0\|,0},0],0),0<>>,0*,0=**,0=***,0=****,0=*****,0=******,0=*******
 setlocal nolisp
 setlocal nosmartindent
 
 " Only define the function once.
-if exists("*GetSATySFiIndent")
- finish
-endif
+" if exists("*GetSATySFiIndent")
+"  finish
+" endif
 
 " Ignoring patterns
-let s:ignore_for_prog = 'synIDattr(synID(line("."), col("."), 0), "name") !~ "satysfiProg"'
+let s:ignorepat = 'synIDattr(synID(line("."), col("."), 0), "name") =~ "Comment\\|Literal"'
+let s:ignorepat_for_prog = 'synIDattr(synID(line("."), col("."), 0), "name") !~ "^\\%(satysfiProg\\|$\\)"'
 
 " Indent pairs
 function! s:FindPair(pstart, pmid, pend)
   call search(a:pend, 'W')
-  return indent(searchpair(a:pstart, a:pmid, a:pend, 'bWn', s:ignore_for_prog))
+  return indent(searchpair(a:pstart, a:pmid, a:pend, 'bWn', s:ignorepat))
 endfunction
 function! s:FindPairBefore(pstart, pmid, pend)
-  return indent(searchpair(a:pstart, a:pmid, a:pend, 'bWn', s:ignore_for_prog))
+  return indent(searchpair(a:pstart, a:pmid, a:pend, 'bWn', s:ignorepat))
+endfunction
+function! s:FindPairProg(pstart, pmid, pend)
+  call search(a:pend, 'W')
+  return indent(searchpair(a:pstart, a:pmid, a:pend, 'bWn', s:ignorepat_for_prog))
+endfunction
+function! s:FindPairBeforeProg(pstart, pmid, pend)
+  return indent(searchpair(a:pstart, a:pmid, a:pend, 'bWn', s:ignorepat_for_prog))
 endfunction
 
 function! s:ProgIndent()
@@ -84,7 +92,7 @@ function! s:ProgIndent()
     let let_line = search('\<\%(let\|let-block\|let-inline\|let-math\|let-mutable\|let-rec\)\>', 'bWn')
     let type_line = search('\<type\>', 'bWn')
     if let_line >= type_line
-      return s:FindPairBefore('\<\%(let\|let-block\|let-inline\|let-math\|let-mutable\|let-rec\)\>', '', '\<in\>')
+      return s:FindPairBeforeProg('\<\%(let\|let-block\|let-inline\|let-math\|let-mutable\|let-rec\)\>', '', '\<in\>')
     else
       " TODO: deal with modules
       return 0
@@ -95,21 +103,21 @@ function! s:ProgIndent()
     return 0
   elseif line =~ '^\s*do\>'
     " while-do
-    return s:FindPair('\<while\>', '', '\<do\>')
+    return s:FindPairProg('\<while\>', '', '\<do\>')
   elseif line =~ '^\s*then\>'
     " if-then-else
-    return s:FindPairBefore('\<if\>', '', '\<else\>')
+    return s:FindPairBeforeProg('\<if\>', '', '\<else\>')
   elseif line =~ '^\s*else\>'
     " if-then-else
-    return s:FindPair('\<if\>', '', '\<else\>')
+    return s:FindPairProg('\<if\>', '', '\<else\>')
   elseif line =~ '^\s*->'
     " fun ->
-    return s:FindPair('\<fun\>', '', '->')
+    return s:FindPairProg('\<fun\>', '', '->')
   elseif line =~ '^\s*|>' && lline =~ '|>'
     " Align |> same
     return match(lline, '|>')
   elseif line =~ '^\s*in\>'
-    return s:FindPair('\<\%(let\|let-block\|let-inline\|let-math\|let-mutable\|let-rec\)\>', '', '\<in\>')
+    return s:FindPairProg('\<\%(let\|let-block\|let-inline\|let-math\|let-mutable\|let-rec\)\>', '', '\<in\>')
   elseif line =~ '^\s*|'
     return lindent
   elseif line =~ '^\s*)'
@@ -127,6 +135,46 @@ function! s:VertIndent()
 endfunction
 
 function! s:HorzIndent()
+  " Search for the previous non-empty line
+  call cursor(v:lnum, 1)
+  let llnum = search('^\s*[^ \t\r\n%]', 'bWn')
+  call cursor(v:lnum, 1)
+  if llnum == 0
+    " 0 indent at the top
+    return 0
+  endif
+
+  " Previous line and its indentation
+  let lline = substitute(getline(llnum), '%.*', '', '')
+  let lindent = indent(llnum)
+
+  " Previous bullet
+  let lbulletindent = lindent
+  if lline =~ '^\s*\*'
+    let lbulletindent = lindent + strlen(matchlist(lline, '^\s*\(\*\+\s*\)')[1])
+  endif
+
+  " Current line
+  let line = getline(v:lnum)
+
+  if line =~ '^\s*}'
+    return s:FindPair('{', '', '}')
+  elseif lline =~ '{\s*$'
+    return lindent + shiftwidth()
+  elseif line =~ '^\s*\*'
+    let numbullet = strlen(matchlist(line, '^\s*\(\*\+\)')[1])
+    let lblnum = search('^\s*\%(\*\{' . (numbullet + 1) . '}\)\@!\*', 'bWn')
+    let lbindent = indent(lblnum)
+    let lbline = getline(lblnum)
+    " echo "numbullet = " . numbullet . ", lblnum = " . lblnum . ", lbindent = " . lbindent . ", lbline = " . lbline
+    if lbline !~ '^\s*\*'
+      return -1
+    endif
+    let lbnumbullet = strlen(matchlist(lbline, '^\s*\(\*\+\)')[1])
+    return lbindent + (numbullet - lbnumbullet) * shiftwidth()
+  else
+    return lbulletindent
+  endif
   return -1
 endfunction
 
