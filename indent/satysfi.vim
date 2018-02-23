@@ -69,6 +69,12 @@ function! s:ProgIndent()
     return 0
   endif
 
+  " Some canonicalization
+  let lindent_orig = lindent
+  if lline =~ '^\s*|\s*'
+    let lindent = lindent + strlen(matchlist(lline, '^\s*\(|\s*\)')[1])
+  endif
+
   " Current line
   let line = getline(v:lnum)
   if line =~ '^\s*\%(let\|let-block\|let-inline\|let-math\|let-mutable\|let-rec\)\>'
@@ -124,7 +130,21 @@ function! s:ProgIndent()
   elseif line =~ '^\s*in\>'
     return s:FindPairProg('\<\%(let\|let-block\|let-inline\|let-math\|let-mutable\|let-rec\)\>', '', '\<in\>')
   elseif line =~ '^\s*|' && line !~ '^\s*|)'
-    return lindent
+    " type or match
+    let up_lpos = searchpair('[([]', '^\s*\<type\>\|\<match\>\|^\s*|', '[])]', 'bWn', s:ignorepat_for_prog)
+    let up_line = getline(up_lpos)
+    let up_indent = indent(up_lpos)
+    if up_line =~ '^\s*\<type\>'
+      return up_indent + shiftwidth()
+    elseif up_line =~ '\<match\>'
+      let matchoff = strlen(matchlist(up_line, '^\s*\(.\{-}\)\<match\>')[1])
+      return up_indent + matchoff
+    elseif up_line =~ '^\s*|'
+      return up_indent
+    else
+      " unknown
+      return -1
+    endif
   elseif line =~ '^\s*)'
     return s:FindPair('(', '', ')')
   elseif line =~ '^\s*|)'
