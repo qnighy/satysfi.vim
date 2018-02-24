@@ -25,7 +25,9 @@ syn case match
 
 
 " Common ignores
-syn region satysfiComment start="%" end="$" contains=@Spell
+syn region satysfiComment start="%" end="$" contains=satysfiCommentTodo,@Spell
+
+syn keyword satysfiCommentTodo contained TODO FIXME XXX NB NOTE
 
 syn region satysfiLiteral start="`" end="`"
 syn region satysfiLiteral start="``" end="``"
@@ -280,6 +282,7 @@ hi def link satysfiCommandKnown Statement
 hi def link satysfiCommandStyle Type
 hi def link satysfiEscape Special
 hi def link satysfiComment Comment
+hi def link satysfiCommentTodo Todo
 hi def link satysfiKnownPackage Special
 
 " Mark the buffer as highlighted.
