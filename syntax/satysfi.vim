@@ -151,7 +151,7 @@ syn region satysfiHorzFromVert contained matchgroup=satysfiVertKeyword start="{"
 
 
 " Horizontal mode
-syn cluster satysfiHorz contains=satysfiComment,satysfiLiteral,satysfiHorzError,satysfiHorzInvoke,satysfiHorzOperator,satysfiHorzEscape,satysfiVertFromHorz,satysfiHorzEncl,satysfiMathFromHorz
+syn cluster satysfiHorz contains=satysfiComment,satysfiLiteral,satysfiHorzError,satysfiHorzInvoke,satysfiHorzOperator,satysfiHorzEscape,satysfiVertFromHorz,satysfiHorzEncl,satysfiMathFromHorz,@Spell
 syn cluster satysfiHorzActv contains=satysfiComment,satysfiHorzActvError,satysfiHorzArgControl,satysfiProgFromHorz,satysfiVertFromHorz,satysfiHorzEncl
 
 " Unexpected symbols
