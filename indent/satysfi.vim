@@ -180,6 +180,9 @@ function! s:ProgIndent()
   elseif lline =~ '[;,]\s*$'
     " Seems to be in a listy thing. Align same
     return lindent
+  elseif lline =~ '\<in\s*$'
+    " Align let-ins same
+    return lindent
   else
     return lindent + shiftwidth()
   endif
