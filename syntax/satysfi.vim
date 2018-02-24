@@ -42,7 +42,7 @@ syn region satysfiLiteral start="```````````" end="```````````"
 
 
 " Program mode
-syn cluster satysfiProg contains=satysfiComment,satysfiLiteral,satysfiProgIdentifier,satysfiProgTypevar,satysfiProgHeadRequire,satysfiProgHeadImport,satysfiProgNumber,satysfiProgLength,satysfiProgOperator,satysfiProgKeyword,satysfiProgArgControl,satysfiProgConstructor,satysfiProgModulePrefix,satysfiProgCommand,satysfiProgEncl,satysfiVertFromProg,satysfiHorzFromProg,satysfiMathFromProg
+syn cluster satysfiProg contains=satysfiComment,satysfiLiteral,satysfiProgIdentifier,satysfiProgTypevar,satysfiProgError,satysfiProgHeadRequire,satysfiProgHeadImport,satysfiProgNumber,satysfiProgLength,satysfiProgOperator,satysfiProgKeyword,satysfiProgArgControl,satysfiProgConstructor,satysfiProgModulePrefix,satysfiProgCommand,satysfiProgEncl,satysfiVertFromProg,satysfiHorzFromProg,satysfiMathFromProg
 
 syn match satysfiProgIdentifier "\<[a-z][-a-zA-Z0-9]*\>"
 syn match satysfiProgTypevar "'[a-z][-a-zA-Z0-9]*\>"
@@ -53,6 +53,8 @@ syn keyword satysfiProgKeyword match with when as type of module struct sig
 syn keyword satysfiProgKeyword val end direct constraint
 syn keyword satysfiProgKeyword let-inline let-block let-math controls cycle
 syn keyword satysfiProgKeyword inline-cmd block-cmd math-cmd command
+" '@' must form a valid header
+syn match satysfiProgError "@[a-z]*[^a-z]\@="
 syn region satysfiProgHeadRequire matchgroup=satysfiProgKeyword start="@require:" matchgroup=NONE end="$" contains=satysfiProgKnownPackage
 syn region satysfiProgHeadImport matchgroup=satysfiProgKeyword start="@import:" matchgroup=NONE end="$"
 syn keyword satysfiProgKnownPackage contained code color deco gr hdecoset itemize list math mitou-report pervasives proof stdja stdjabook tabular vdecoset
@@ -66,6 +68,9 @@ syn match satysfiProgLength "\%([0-9]\+\.[0-9]*\|\.[0-9]\+\)[a-z][-a-zA-Z0-9]*"
 syn match satysfiProgOperator  ";"
 syn match satysfiProgOperator  "#"
 
+" TODO: a stray . might be an error, depending on the directions of the SATySFi
+" grammar.
+syn match satysfiProgOperator "\."
 syn match satysfiProgOperator "\.\."
 syn match satysfiProgOperator "--"
 syn match satysfiProgKeyword "->"
@@ -99,19 +104,34 @@ syn region satysfiProgEncl transparent matchgroup=satysfiProgKeyword start="(" m
 syn region satysfiProgEncl transparent matchgroup=satysfiProgKeyword start="(|" matchgroup=satysfiProgKeyword end="|)"  contains=@satysfiProg
 syn region satysfiProgEncl transparent matchgroup=satysfiProgKeyword start="\[" matchgroup=satysfiProgKeyword end="\]" contains=@satysfiProg
 syn region satysfiProgEncl transparent matchgroup=satysfiProgKeyword start="<\[" matchgroup=satysfiProgKeyword end="\]>" contains=@satysfiProg
+" '\'' must be followed by '<'
+syn match satysfiProgError "'[^<]\@="
 syn region satysfiVertFromProg matchgroup=satysfiProgKeyword start="'<" matchgroup=satysfiVertKeyword end=">" contains=@satysfiVert
 syn region satysfiHorzFromProg matchgroup=satysfiProgKeyword start="{" matchgroup=satysfiHorzKeyword end="}" contains=@satysfiHorz
+" '$' must be followed by '{'
+syn match satysfiProgError "\$[^{]\@="
 syn region satysfiMathFromProg matchgroup=satysfiProgKeyword start="\${" matchgroup=satysfiMathKeyword end="}" contains=@satysfiMath
 
 syn match satysfiProgConstructor  "()"
 syn match satysfiProgConstructor  "(|\s*|)"
 syn match satysfiProgConstructor  "\[\s*\]"
 
+" '"' is nowhere used
+syn match satysfiProgError "\""
 
 
 " Vertical mode
-syn cluster satysfiVert contains=satysfiComment,satysfiVertInvoke,satysfiVertEncl,satysfiHorzFromVert
-syn cluster satysfiVertActv contains=satysfiComment,satysfiVertArgControl,satysfiProgFromVert,satysfiVertEncl,satysfiHorzFromVert
+syn cluster satysfiVert contains=satysfiComment,satysfiVertError,satysfiVertInvoke,satysfiVertEncl,satysfiHorzFromVert
+syn cluster satysfiVertActv contains=satysfiComment,satysfiVertActvError,satysfiVertArgControl,satysfiProgFromVert,satysfiVertEncl,satysfiHorzFromVert
+
+" Unexpected symbols
+syn match satysfiVertError "[^ \t\r\n%#+<>{]" contained
+syn match satysfiVertActvError "[^ \t\r\n%([{<;]" contained
+" # and + must be followed by alpha
+syn match satysfiVertError "[+#][^a-zA-Z]\@=" contained
+" Special error for command names
+syn match satysfiVertError "\\\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" contained
+syn match satysfiVertActvError "[+#\\]\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" contained
 
 syn region satysfiVertInvoke contained transparent matchgroup=satysfiVertCommand start="[+#]\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" matchgroup=satysfiVertKeyword end=";\|[}>]\@<=" contains=@satysfiVertActv
 syn region satysfiVertInvoke contained transparent matchgroup=satysfiVertCommandSection start="\%(+section\|+subsection\)\>" matchgroup=satysfiVertKeyword end=";\|[}>]\@<=" contains=@satysfiVertActv
@@ -129,8 +149,19 @@ syn region satysfiHorzFromVert contained matchgroup=satysfiVertKeyword start="{"
 
 
 " Horizontal mode
-syn cluster satysfiHorz contains=satysfiComment,satysfiLiteral,satysfiHorzInvoke,satysfiHorzOperator,satysfiHorzEscape,satysfiVertFromHorz,satysfiHorzEncl,satysfiMathFromHorz
-syn cluster satysfiHorzActv contains=satysfiComment,satysfiHorzArgControl,satysfiProgFromHorz,satysfiVertFromHorz,satysfiHorzEncl
+syn cluster satysfiHorz contains=satysfiComment,satysfiLiteral,satysfiHorzError,satysfiHorzInvoke,satysfiHorzOperator,satysfiHorzEscape,satysfiVertFromHorz,satysfiHorzEncl,satysfiMathFromHorz
+syn cluster satysfiHorzActv contains=satysfiComment,satysfiHorzActvError,satysfiHorzArgControl,satysfiProgFromHorz,satysfiVertFromHorz,satysfiHorzEncl
+
+" Unexpected symbols
+syn match satysfiHorzError "[@;]" contained
+syn match satysfiHorzActvError "[^ \t\r\n%([{<;]" contained
+" # and + must be followed by alpha
+syn match satysfiHorzError "[\\#][^a-zA-Z]\@=" contained
+" $ must be followed by {
+syn match satysfiHorzError "\$[^{]\@=" contained
+" Special error for command names
+syn match satysfiHorzError "+\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" contained
+syn match satysfiHorzActvError "[+#\\]\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" contained
 
 syn region satysfiHorzInvoke contained transparent matchgroup=satysfiHorzCommand start="[\\#]\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" matchgroup=satysfiHorzKeyword end=";\|[}>]\@<=" contains=@satysfiHorzActv
 syn region satysfiHorzInvoke contained transparent matchgroup=satysfiHorzCommandKnown start="\\\%(LaTeX\|SATySFi\|TeX\|figure\|math\|ref\|ref-page\|tabular\)\>" matchgroup=satysfiHorzKeyword end=";\|[}>]\@<=" contains=@satysfiHorzActv
@@ -153,7 +184,12 @@ syn region satysfiMathFromHorz contained matchgroup=satysfiHorzKeyword start="\$
 
 
 " Math mode
-syn cluster satysfiMath contains=satysfiComment,satysfiMathOperator,satysfiMathIdentifier,satysfiMathHashVariable,satysfiMathCommand,satysfiMathCommandKnown,satysfiMathEscape,satysfiProgFromMath,satysfiVertFromMath,satysfiHorzFromMath,satysfiMathEncl
+syn cluster satysfiMath contains=satysfiComment,satysfiMathError,satysfiMathOperator,satysfiMathIdentifier,satysfiMathHashVariable,satysfiMathCommand,satysfiMathCommandKnown,satysfiMathEscape,satysfiProgFromMath,satysfiVertFromMath,satysfiHorzFromMath,satysfiMathEncl
+
+" Unexpected symbols
+syn match satysfiMathError "[][|()"#$&;@]" contained
+" ! must be followed by [{<([]
+syn match satysfiMathError "![^{<([]\@=" contained
 
 syn match satysfiMathOperator "\^" contained
 syn match satysfiMathOperator "_" contained
@@ -190,6 +226,7 @@ syn sync minlines=100
 
 
 " Bind mode-specific names to mode-agnostic names
+hi def link satysfiProgError satysfiError
 hi def link satysfiProgNumber satysfiNumber
 hi def link satysfiProgLength satysfiLength
 hi def link satysfiProgConstructor satysfiConstructor
@@ -200,11 +237,15 @@ hi def link satysfiProgModulePrefix satysfiModulePrefix
 hi def link satysfiProgCommand satysfiCommand
 hi def link satysfiProgKnownPackage satysfiKnownPackage
 
+hi def link satysfiVertError satysfiError
+hi def link satysfiVertActvError satysfiError
 hi def link satysfiVertKeyword satysfiKeyword
 hi def link satysfiVertCommand satysfiCommand
 hi def link satysfiVertCommandKnown satysfiCommandKnown
 hi def link satysfiVertCommandSection satysfiCommandSection
 
+hi def link satysfiHorzError satysfiError
+hi def link satysfiHorzActvError satysfiError
 hi def link satysfiHorzKeyword satysfiKeyword
 hi def link satysfiHorzOperator satysfiOperator
 hi def link satysfiHorzCommand satysfiCommand
@@ -212,6 +253,7 @@ hi def link satysfiHorzCommandKnown satysfiCommandKnown
 hi def link satysfiHorzCommandStyle satysfiCommandStyle
 hi def link satysfiHorzEscape satysfiEscape
 
+hi def link satysfiMathError satysfiError
 hi def link satysfiMathKeyword satysfiKeyword
 hi def link satysfiMathOperator satysfiOperator
 hi def link satysfiMathHashVariable satysfiHashVariable
@@ -221,6 +263,7 @@ hi def link satysfiMathCommandStyle satysfiCommandStyle
 hi def link satysfiMathEscape satysfiEscape
 
 " Now we can link them with predefined groups.
+hi def link satysfiError Error
 hi def link satysfiKeyword Keyword
 hi def link satysfiNumber Number
 hi def link satysfiLength Number
