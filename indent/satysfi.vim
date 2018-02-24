@@ -152,11 +152,11 @@ function! s:ProgIndent()
   elseif line =~ '^\s*in\>'
     return s:FindPairProg('\<\%(let\|let-block\|let-inline\|let-math\|let-mutable\|let-rec\)\>', '', '\<in\>')
   elseif line =~ '^\s*|' && line !~ '^\s*|)' && line !~ '^\s*|>'
-    " type or match
-    let up_lpos = searchpair(s:exprbegin_womatch, '^\s*\<type\>\|\<match\>\|^\s*|', s:exprend_womatch, 'bWn', s:ignorepat_for_prog)
+    " type, let or match
+    let up_lpos = searchpair(s:exprbegin_womatch, '\%(^\s*\)\@<=\<\%(type\|let\|let-rec\|let-mutable\|let-inline\|let-block\|let-math\)\>\|\<match\>\|^\s*|', s:exprend_womatch, 'bWn', s:ignorepat_for_prog)
     let up_line = getline(up_lpos)
     let up_indent = indent(up_lpos)
-    if up_line =~ '^\s*\<type\>'
+    if up_line =~ '^\s*\<\%(type\|let\|let-rec\|let-mutable\|let-inline\|let-block\|let-math\)\>'
       return up_indent + shiftwidth()
     elseif up_line =~ '\<match\>'
       let matchoff = strlen(matchlist(up_line, '^\s*\(.\{-}\)\<match\>')[1])
