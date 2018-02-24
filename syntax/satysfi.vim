@@ -55,7 +55,7 @@ syn keyword satysfiProgKeyword let-inline let-block let-math controls cycle
 syn keyword satysfiProgKeyword inline-cmd block-cmd math-cmd command
 syn region satysfiProgHeadRequire matchgroup=satysfiProgKeyword start="@require:" matchgroup=NONE end="$" contains=satysfiProgKnownPackage
 syn region satysfiProgHeadImport matchgroup=satysfiProgKeyword start="@import:" matchgroup=NONE end="$"
-syn keyword satysfiProgKnownPackage contained code color deco gr hdecoset itemize list math mitou-report pervasives stdja stdjabook tabular vdecoset
+syn keyword satysfiProgKnownPackage contained code color deco gr hdecoset itemize list math mitou-report pervasives proof stdja stdjabook tabular vdecoset
 
 syn match satysfiProgNumber "0\|[1-9][0-9]*"
 syn match satysfiProgNumber "0[xX][0-9a-fA-F]\+"
@@ -115,7 +115,7 @@ syn cluster satysfiVertActv contains=satysfiComment,satysfiVertArgControl,satysf
 
 syn region satysfiVertInvoke contained transparent matchgroup=satysfiVertCommand start="[+#]\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" matchgroup=satysfiVertKeyword end=";\|[}>]\@<=" contains=@satysfiVertActv
 syn region satysfiVertInvoke contained transparent matchgroup=satysfiVertCommandSection start="\%(+section\|+subsection\)\>" matchgroup=satysfiVertKeyword end=";\|[}>]\@<=" contains=@satysfiVertActv
-syn region satysfiVertInvoke contained transparent matchgroup=satysfiVertCommandKnown start="+\%(p\|pn\|listing\|math\)\>" matchgroup=satysfiVertKeyword end=";\|[}>]\@<=" contains=@satysfiVertActv
+syn region satysfiVertInvoke contained transparent matchgroup=satysfiVertCommandKnown start="+\%(code\|console\|p\|pn\|listing\|math\)\>" matchgroup=satysfiVertKeyword end=";\|[}>]\@<=" contains=@satysfiVertActv
 
 syn match satysfiVertArgControl "?:" contained
 syn match satysfiVertArgControl "?\*" contained
@@ -133,7 +133,7 @@ syn cluster satysfiHorz contains=satysfiComment,satysfiLiteral,satysfiHorzInvoke
 syn cluster satysfiHorzActv contains=satysfiComment,satysfiHorzArgControl,satysfiProgFromHorz,satysfiVertFromHorz,satysfiHorzEncl
 
 syn region satysfiHorzInvoke contained transparent matchgroup=satysfiHorzCommand start="[\\#]\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" matchgroup=satysfiHorzKeyword end=";\|[}>]\@<=" contains=@satysfiHorzActv
-syn region satysfiHorzInvoke contained transparent matchgroup=satysfiHorzCommandKnown start="\\\%(SATySFi\|LaTeX\|TeX\|ref\|figure\|tabular\)\>" matchgroup=satysfiHorzKeyword end=";\|[}>]\@<=" contains=@satysfiHorzActv
+syn region satysfiHorzInvoke contained transparent matchgroup=satysfiHorzCommandKnown start="\\\%(LaTeX\|SATySFi\|TeX\|figure\|math\|ref\|ref-page\|tabular\)\>" matchgroup=satysfiHorzKeyword end=";\|[}>]\@<=" contains=@satysfiHorzActv
 syn region satysfiHorzInvoke contained transparent matchgroup=satysfiHorzCommandStyle start="\\\%(emph\)\>" matchgroup=satysfiHorzKeyword end=";\|[}>]\@<=" contains=@satysfiHorzActv
 syn match satysfiHorzEscape "\\[ -@[-`{-~]" contained
 
@@ -161,7 +161,8 @@ syn match satysfiMathOperator "[-+*/:=<>~'.,?`]\+" contained
 syn match satysfiMathIdentifier "[a-zA-Z0-9]" contained
 syn match satysfiMathHashVariable "#\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" contained
 syn match satysfiMathCommand "\\[a-zA-Z][-a-zA-Z0-9]*" contained
-syn match satysfiMathCommandKnown "\\\%(int\|sqrt\|frac\|upper\|lower\|sum\|lim\|to\|paren\|brace\|pi\|infty\)\>" contained
+syn match satysfiMathCommandKnown "\\\%(Gamma\|angle\|app\|brace\|derive\|frac\|infty\|int\|lambda\|ldots\|lim\|lower\|math-color\|math-skip\|mathbin\|mathord\|mathrel\|ordd\|paren\|pi\|pm\|sqrt\|sum\|tau\|to\|upper\)\>" contained
+syn match satysfiMathCommandStyle "\\\%(bm\|math-style\|mathrm\|text\)\>" contained
 syn match satysfiMathEscape "\\[ -@[-`{-~]" contained
 
 syn region satysfiProgFromMath contained transparent matchgroup=satysfiMathKeyword start="!(" matchgroup=satysfiProgKeyword end=")" contains=@satysfiProg
@@ -216,6 +217,7 @@ hi def link satysfiMathOperator satysfiOperator
 hi def link satysfiMathHashVariable satysfiHashVariable
 hi def link satysfiMathCommand satysfiCommand
 hi def link satysfiMathCommandKnown satysfiCommandKnown
+hi def link satysfiMathCommandStyle satysfiCommandStyle
 hi def link satysfiMathEscape satysfiEscape
 
 " Now we can link them with predefined groups.
