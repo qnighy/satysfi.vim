@@ -44,7 +44,7 @@ syn region satysfiLiteral start="```````````" end="```````````"
 
 
 " Program mode
-syn cluster satysfiProg contains=satysfiComment,satysfiLiteral,satysfiProgIdentifier,satysfiProgTypevar,satysfiProgError,satysfiProgHeadRequire,satysfiProgHeadImport,satysfiProgNumber,satysfiProgLength,satysfiProgOperator,satysfiProgKeyword,satysfiProgType,satysfiProgArgControl,satysfiProgConstructor,satysfiProgModulePrefix,satysfiProgCommand,satysfiProgEncl,satysfiVertFromProg,satysfiHorzFromProg,satysfiMathFromProg
+syn cluster satysfiProg contains=satysfiComment,satysfiLiteral,satysfiProgIdentifier,satysfiProgConstructor,satysfiProgTypevar,satysfiProgError,satysfiProgHeadRequire,satysfiProgHeadImport,satysfiProgNumber,satysfiProgLength,satysfiProgOperator,satysfiProgKeyword,satysfiProgType,satysfiProgArgControl,satysfiProgModule,satysfiProgCommand,satysfiProgEncl,satysfiVertFromProg,satysfiHorzFromProg,satysfiMathFromProg
 
 " '@' must form a valid header
 syn match satysfiProgError "@[a-z]*[^a-z]\@="
@@ -56,6 +56,7 @@ syn match satysfiProgError "\$[^{]\@="
 syn match satysfiProgError "\""
 
 syn match satysfiProgIdentifier "\<[a-z][-a-zA-Z0-9]*\>"
+syn match satysfiProgConstructor "\<[A-Z][-a-zA-Z0-9]*\>"
 syn match satysfiProgTypevar "'[a-z][-a-zA-Z0-9]*\>"
 
 syn keyword satysfiProgOperator not mod before
@@ -117,7 +118,8 @@ syn match satysfiProgArgControl "?:"
 syn match satysfiProgArgControl "?\*"
 syn match satysfiProgOperator "!"
 
-syn match satysfiProgModulePrefix "[A-Z][-a-zA-Z0-9]*\.\@="
+syn match satysfiProgModule "\%(\<module\s\+\)\@<=[A-Z][-a-zA-Z0-9]*"
+syn match satysfiProgModule "[A-Z][-a-zA-Z0-9]*\.\@="
 
 syn match satysfiProgCommand "[\\+][a-zA-Z][-a-zA-Z0-9]*"
 
@@ -249,7 +251,7 @@ hi def link satysfiProgKeyword satysfiKeyword
 hi def link satysfiProgOperator satysfiOperator
 hi def link satysfiProgType satysfiType
 hi def link satysfiProgArgControl satysfiArgControl
-hi def link satysfiProgModulePrefix satysfiModulePrefix
+hi def link satysfiProgModule satysfiModule
 hi def link satysfiProgCommand satysfiCommand
 hi def link satysfiProgKnownPackage satysfiKnownPackage
 
@@ -288,7 +290,7 @@ hi def link satysfiFunDef Keyword
 hi def link satysfiOperator Keyword
 hi def link satysfiType Type
 hi def link satysfiArgControl Keyword
-hi def link satysfiModulePrefix Include
+hi def link satysfiModule Include
 hi def link satysfiLiteral String
 hi def link satysfiHashVariable Identifier
 hi def link satysfiCommand Identifier
