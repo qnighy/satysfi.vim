@@ -49,8 +49,9 @@ syn cluster satysfiProg contains=satysfiComment,satysfiLiteral,satysfiProgIdenti
 syn match satysfiProgIdentifier "\<[a-z][-a-zA-Z0-9]*\>"
 syn match satysfiProgTypevar "'[a-z][-a-zA-Z0-9]*\>"
 
-syn keyword satysfiProgKeyword not mod if then else let let-rec and in fun
-syn keyword satysfiProgKeyword true false before while do let-mutable
+syn keyword satysfiProgOperator not mod before
+syn keyword satysfiProgKeyword if then else let let-rec and in fun
+syn keyword satysfiProgKeyword true false while do let-mutable
 syn keyword satysfiProgKeyword match with when as type of module struct sig
 syn keyword satysfiProgKeyword val end direct constraint
 syn keyword satysfiProgKeyword let-inline let-block let-math controls cycle
