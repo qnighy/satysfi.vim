@@ -44,7 +44,7 @@ syn region satysfiLiteral start="```````````" end="```````````"
 
 
 " Program mode
-syn cluster satysfiProg contains=satysfiComment,satysfiLiteral,satysfiProgIdentifier,satysfiProgTypevar,satysfiProgError,satysfiProgHeadRequire,satysfiProgHeadImport,satysfiProgNumber,satysfiProgLength,satysfiProgOperator,satysfiProgKeyword,satysfiProgArgControl,satysfiProgConstructor,satysfiProgModulePrefix,satysfiProgCommand,satysfiProgEncl,satysfiVertFromProg,satysfiHorzFromProg,satysfiMathFromProg
+syn cluster satysfiProg contains=satysfiComment,satysfiLiteral,satysfiProgIdentifier,satysfiProgTypevar,satysfiProgError,satysfiProgHeadRequire,satysfiProgHeadImport,satysfiProgNumber,satysfiProgLength,satysfiProgOperator,satysfiProgKeyword,satysfiProgType,satysfiProgArgControl,satysfiProgConstructor,satysfiProgModulePrefix,satysfiProgCommand,satysfiProgEncl,satysfiVertFromProg,satysfiHorzFromProg,satysfiMathFromProg
 
 " '@' must form a valid header
 syn match satysfiProgError "@[a-z]*[^a-z]\@="
@@ -64,7 +64,18 @@ syn keyword satysfiProgKeyword true false while do let-mutable
 syn keyword satysfiProgKeyword match with when as type of module struct sig
 syn keyword satysfiProgKeyword val end direct constraint
 syn keyword satysfiProgKeyword let-inline let-block let-math controls cycle
-syn keyword satysfiProgKeyword inline-cmd block-cmd math-cmd command
+syn keyword satysfiProgKeyword command
+syn keyword satysfiProgType inline-cmd block-cmd math-cmd
+" Not really a keyword, but resolved by the compiler
+syn keyword satysfiProgType list ref
+" Predefined by the compiler (base_type_hash_table)
+syn keyword satysfiProgType unit bool int float length string inline-text
+syn keyword satysfiProgType block-text inline-boxes block-boxes context
+syn keyword satysfiProgType pre-path path graphics image document math
+" Predefined by the compiler (add_default_types)
+syn keyword satysfiProgType option itemize color script language page
+syn keyword satysfiProgType math-class math-char-class cell deco deco-set
+syn keyword satysfiProgType inline-graphics
 syn region satysfiProgHeadRequire matchgroup=satysfiProgKeyword start="@require:" matchgroup=NONE end="$" contains=satysfiProgKnownPackage
 syn region satysfiProgHeadImport matchgroup=satysfiProgKeyword start="@import:" matchgroup=NONE end="$"
 syn keyword satysfiProgKnownPackage contained code color deco gr hdecoset itemize list math mitou-report pervasives proof stdja stdjabook tabular vdecoset
@@ -236,6 +247,7 @@ hi def link satysfiProgLength satysfiLength
 hi def link satysfiProgConstructor satysfiConstructor
 hi def link satysfiProgKeyword satysfiKeyword
 hi def link satysfiProgOperator satysfiOperator
+hi def link satysfiProgType satysfiType
 hi def link satysfiProgArgControl satysfiArgControl
 hi def link satysfiProgModulePrefix satysfiModulePrefix
 hi def link satysfiProgCommand satysfiCommand
@@ -274,6 +286,7 @@ hi def link satysfiLength Number
 hi def link satysfiConstructor Constant
 hi def link satysfiFunDef Keyword
 hi def link satysfiOperator Keyword
+hi def link satysfiType Type
 hi def link satysfiArgControl Keyword
 hi def link satysfiModulePrefix Include
 hi def link satysfiLiteral String
