@@ -181,7 +181,7 @@ syn match satysfiHorzError "+\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" co
 syn match satysfiHorzActvError "[+#\\]\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" contained
 
 syn region satysfiHorzInvoke contained transparent matchgroup=satysfiHorzCommand start="[\\#]\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" matchgroup=satysfiHorzKeyword end=";\|[}>]\@<=" contains=@satysfiHorzActv
-syn region satysfiHorzInvoke contained transparent matchgroup=satysfiHorzCommandKnown start="\\\%(LaTeX\|SATySFi\|TeX\|figure\|math\|ref\|ref-page\|tabular\)\>" matchgroup=satysfiHorzKeyword end=";\|[}>]\@<=" contains=@satysfiHorzActv
+syn region satysfiHorzInvoke contained transparent matchgroup=satysfiHorzCommandKnown start="\\\%(LaTeX\|SATySFi\|TeX\|figure\|fil\|fil-both\|math\|ref\|ref-page\|tabular\)\>" matchgroup=satysfiHorzKeyword end=";\|[}>]\@<=" contains=@satysfiHorzActv
 syn region satysfiHorzInvoke contained transparent matchgroup=satysfiHorzCommandStyle start="\\\%(emph\)\>" matchgroup=satysfiHorzKeyword end=";\|[}>]\@<=" contains=@satysfiHorzActv
 syn match satysfiHorzEscape "\\[ -@[-`{-~]" contained
 
