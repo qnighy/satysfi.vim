@@ -46,6 +46,15 @@ syn region satysfiLiteral start="```````````" end="```````````"
 " Program mode
 syn cluster satysfiProg contains=satysfiComment,satysfiLiteral,satysfiProgIdentifier,satysfiProgTypevar,satysfiProgError,satysfiProgHeadRequire,satysfiProgHeadImport,satysfiProgNumber,satysfiProgLength,satysfiProgOperator,satysfiProgKeyword,satysfiProgArgControl,satysfiProgConstructor,satysfiProgModulePrefix,satysfiProgCommand,satysfiProgEncl,satysfiVertFromProg,satysfiHorzFromProg,satysfiMathFromProg
 
+" '@' must form a valid header
+syn match satysfiProgError "@[a-z]*[^a-z]\@="
+" '\'' must be followed by '<' or an identifier
+syn match satysfiProgError "'[^<a-z]\@="
+" '$' must be followed by '{'
+syn match satysfiProgError "\$[^{]\@="
+" '"' is nowhere used
+syn match satysfiProgError "\""
+
 syn match satysfiProgIdentifier "\<[a-z][-a-zA-Z0-9]*\>"
 syn match satysfiProgTypevar "'[a-z][-a-zA-Z0-9]*\>"
 
@@ -56,8 +65,6 @@ syn keyword satysfiProgKeyword match with when as type of module struct sig
 syn keyword satysfiProgKeyword val end direct constraint
 syn keyword satysfiProgKeyword let-inline let-block let-math controls cycle
 syn keyword satysfiProgKeyword inline-cmd block-cmd math-cmd command
-" '@' must form a valid header
-syn match satysfiProgError "@[a-z]*[^a-z]\@="
 syn region satysfiProgHeadRequire matchgroup=satysfiProgKeyword start="@require:" matchgroup=NONE end="$" contains=satysfiProgKnownPackage
 syn region satysfiProgHeadImport matchgroup=satysfiProgKeyword start="@import:" matchgroup=NONE end="$"
 syn keyword satysfiProgKnownPackage contained code color deco gr hdecoset itemize list math mitou-report pervasives proof stdja stdjabook tabular vdecoset
@@ -107,20 +114,14 @@ syn region satysfiProgEncl transparent matchgroup=satysfiProgKeyword start="(" m
 syn region satysfiProgEncl transparent matchgroup=satysfiProgKeyword start="(|" matchgroup=satysfiProgKeyword end="|)"  contains=@satysfiProg
 syn region satysfiProgEncl transparent matchgroup=satysfiProgKeyword start="\[" matchgroup=satysfiProgKeyword end="\]" contains=@satysfiProg
 syn region satysfiProgEncl transparent matchgroup=satysfiProgKeyword start="<\[" matchgroup=satysfiProgKeyword end="\]>" contains=@satysfiProg
-" '\'' must be followed by '<'
-syn match satysfiProgError "'[^<]\@="
 syn region satysfiVertFromProg matchgroup=satysfiProgKeyword start="'<" matchgroup=satysfiVertKeyword end=">" contains=@satysfiVert
 syn region satysfiHorzFromProg matchgroup=satysfiProgKeyword start="{" matchgroup=satysfiHorzKeyword end="}" contains=@satysfiHorz
-" '$' must be followed by '{'
-syn match satysfiProgError "\$[^{]\@="
 syn region satysfiMathFromProg matchgroup=satysfiProgKeyword start="\${" matchgroup=satysfiMathKeyword end="}" contains=@satysfiMath
 
 syn match satysfiProgConstructor  "()"
 syn match satysfiProgConstructor  "(|\s*|)"
 syn match satysfiProgConstructor  "\[\s*\]"
 
-" '"' is nowhere used
-syn match satysfiProgError "\""
 
 
 " Vertical mode
