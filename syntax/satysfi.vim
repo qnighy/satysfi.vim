@@ -28,6 +28,8 @@ syn case match
 syn region satysfiComment start="%" end="$" contains=satysfiCommentTodo,@Spell
 syn region satysfiCommentVertActv start="%" end="$" contains=satysfiCommentTodo,@Spell contained nextgroup=@satysfiVertActv skipwhite skipempty
 syn region satysfiCommentVertActv2 start="%" end="$" contains=satysfiCommentTodo,@Spell contained nextgroup=@satysfiVertActv2 skipwhite skipempty
+syn region satysfiCommentHorzActv start="%" end="$" contains=satysfiCommentTodo,@Spell contained nextgroup=@satysfiHorzActv skipwhite skipempty
+syn region satysfiCommentHorzActv2 start="%" end="$" contains=satysfiCommentTodo,@Spell contained nextgroup=@satysfiHorzActv2 skipwhite skipempty
 
 syn keyword satysfiCommentTodo contained TODO FIXME XXX NB NOTE
 
@@ -171,37 +173,45 @@ syn match satysfiVertSemicolon ";" contained
 
 
 " Horizontal mode
-syn cluster satysfiHorz contains=satysfiComment,satysfiLiteral,satysfiHorzError,satysfiHorzInvoke,satysfiHorzOperator,satysfiHorzEscape,satysfiVertFromHorz,satysfiHorzEncl,satysfiMathFromHorz,@Spell
-syn cluster satysfiHorzActv contains=satysfiComment,satysfiHorzActvError,satysfiHorzArgControl,satysfiProgFromHorz,satysfiVertFromHorz,satysfiHorzEncl
+syn cluster satysfiHorz contains=satysfiComment,satysfiLiteral,satysfiHorzError,satysfiHorzCommand,satysfiHorzCommandSection,satysfiHorzCommandKnown,satysfiHorzOperator,satysfiHorzEscape,satysfiMathFromHorz,@Spell
+syn cluster satysfiHorzActv contains=satysfiCommentHorzActv,satysfiHorzActvError,satysfiHorzArgControl,satysfiProgFromHorz,satysfiVertFromHorz,satysfiHorzEncl,satysfiHorzSemicolon
+syn cluster satysfiHorzActv2 contains=satysfiCommentHorzActv2,satysfiHorzActv2Error,satysfiVertFromHorz,satysfiHorzEncl
 
 " Unexpected symbols
-syn match satysfiHorzError "[@;]" contained
-syn match satysfiHorzActvError "[^ \t\r\n%([{<;]" contained
+syn match satysfiHorzError "[@;{<]" contained
+syn match satysfiHorzActv2Error "[@;]" contained nextgroup=@satysfiHorzActv2 skipwhite skipempty
 " # and + must be followed by alpha
 syn match satysfiHorzError "[\\#][^a-zA-Z]\@=" contained
 " $ must be followed by {
 syn match satysfiHorzError "\$[^{]\@=" contained
 " Special error for command names
 syn match satysfiHorzError "+\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" contained
-syn match satysfiHorzActvError "[+#\\]\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" contained
 
-syn region satysfiHorzInvoke contained transparent matchgroup=satysfiHorzCommand start="[\\#]\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" matchgroup=satysfiHorzKeyword end=";\|[}>]\@<=" contains=@satysfiHorzActv
-syn region satysfiHorzInvoke contained transparent matchgroup=satysfiHorzCommandKnown start="\\\%(LaTeX\|SATySFi\|TeX\|figure\|fil\|fil-both\|math\|ref\|ref-page\|tabular\)\>" matchgroup=satysfiHorzKeyword end=";\|[}>]\@<=" contains=@satysfiHorzActv
-syn region satysfiHorzInvoke contained transparent matchgroup=satysfiHorzCommandStyle start="\\\%(emph\)\>" matchgroup=satysfiHorzKeyword end=";\|[}>]\@<=" contains=@satysfiHorzActv
+syn match satysfiHorzCommand "[\\#]\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" contained nextgroup=@satysfiHorzActv skipwhite skipempty
+syn match satysfiHorzCommandKnown "\\\%(LaTeX\|SATySFi\|TeX\|figure\|fil\|fil-both\|math\|ref\|ref-page\|tabular\)\>" contained nextgroup=@satysfiHorzActv skipwhite skipempty
+syn match satysfiHorzCommandStyle "\\\%(emph\)\>" contained nextgroup=@satysfiHorzActv skipwhite skipempty
 syn match satysfiHorzEscape "\\[ -@[-`{-~]" contained
+" Typical error
+syn match satysfiHorzError "[\\#]\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*\s*}" contained
 
 syn match satysfiHorzOperator "|" contained
 syn match satysfiHorzOperator "\*\+" contained
 
-syn match satysfiHorzArgControl "?:" contained
-syn match satysfiHorzArgControl "?\*" contained
+syn match satysfiHorzArgControl "?:" contained nextgroup=@satysfiHorzActv skipwhite skipempty
+syn match satysfiHorzArgControl "?\*" contained nextgroup=@satysfiHorzActv skipwhite skipempty
 
-syn region satysfiProgFromHorz contained matchgroup=satysfiHorzKeyword start="(" matchgroup=satysfiProgKeyword end=")" contains=@satysfiProg
-syn region satysfiProgFromHorz contained matchgroup=satysfiHorzKeyword start="(|" matchgroup=satysfiProgKeyword end="|)"  contains=@satysfiProg
-syn region satysfiProgFromHorz contained matchgroup=satysfiHorzKeyword start="\[" matchgroup=satysfiProgKeyword end="\]" contains=@satysfiProg
-syn region satysfiVertFromHorz contained matchgroup=satysfiHorzKeyword start="<" matchgroup=satysfiVertKeyword end=">" contains=@satysfiVert
-syn region satysfiHorzEncl contained matchgroup=satysfiHorzKeyword start="{" matchgroup=satysfiHorzKeyword end="}" contains=@satysfiHorz
+syn region satysfiProgFromHorz contained matchgroup=satysfiHorzKeyword start="(" matchgroup=satysfiProgKeyword end=")" contains=@satysfiProg nextgroup=@satysfiHorzActv skipwhite skipempty
+syn region satysfiProgFromHorz contained matchgroup=satysfiHorzKeyword start="(|" matchgroup=satysfiProgKeyword end="|)"  contains=@satysfiProg nextgroup=@satysfiHorzActv skipwhite skipempty
+syn region satysfiProgFromHorz contained matchgroup=satysfiHorzKeyword start="\[" matchgroup=satysfiProgKeyword end="\]" contains=@satysfiProg nextgroup=@satysfiHorzActv skipwhite skipempty
+syn region satysfiVertFromHorz contained matchgroup=satysfiHorzKeyword start="<" matchgroup=satysfiVertKeyword end=">" contains=@satysfiVert nextgroup=@satysfiHorzActv2 skipwhite skipempty
+syn region satysfiHorzEncl contained matchgroup=satysfiHorzKeyword start="{" matchgroup=satysfiHorzKeyword end="}" contains=@satysfiHorz nextgroup=@satysfiHorzActv2 skipwhite skipempty
 syn region satysfiMathFromHorz contained matchgroup=satysfiHorzKeyword start="\${" matchgroup=satysfiMathKeyword end="}" contains=@satysfiMath
+syn match satysfiHorzSemicolon ";" contained
+
+" Errors in HorzActv have to have higher precedence.
+syn match satysfiHorzActvError "[^ \t\r\n?%([{<;]" contained
+syn match satysfiHorzActvError "?[^:*]\@=" contained
+syn match satysfiHorzActvError "[+#\\]\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" contained nextgroup=@satysfiHorzActv skipwhite skipempty
 
 
 
@@ -249,6 +259,8 @@ syn sync minlines=100
 
 hi def link satysfiCommentVertActv satysfiComment
 hi def link satysfiCommentVertActv2 satysfiComment
+hi def link satysfiCommentHorzActv satysfiComment
+hi def link satysfiCommentHorzActv2 satysfiComment
 
 " Bind mode-specific names to mode-agnostic names
 hi def link satysfiProgError satysfiError
@@ -281,6 +293,7 @@ hi def link satysfiHorzOperator satysfiOperator
 hi def link satysfiHorzCommand satysfiCommand
 hi def link satysfiHorzCommandKnown satysfiCommandKnown
 hi def link satysfiHorzCommandStyle satysfiCommandStyle
+hi def link satysfiHorzSemicolon satysfiKeyword
 hi def link satysfiHorzEscape satysfiEscape
 
 hi def link satysfiMathError satysfiError
