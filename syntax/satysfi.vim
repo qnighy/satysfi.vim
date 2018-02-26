@@ -26,6 +26,8 @@ syn case match
 
 " Common ignores
 syn region satysfiComment start="%" end="$" contains=satysfiCommentTodo,@Spell
+syn region satysfiCommentVertActv start="%" end="$" contains=satysfiCommentTodo,@Spell contained nextgroup=@satysfiVertActv skipwhite skipempty
+syn region satysfiCommentVertActv2 start="%" end="$" contains=satysfiCommentTodo,@Spell contained nextgroup=@satysfiVertActv2 skipwhite skipempty
 
 syn keyword satysfiCommentTodo contained TODO FIXME XXX NB NOTE
 
@@ -138,30 +140,33 @@ syn match satysfiProgConstructor  "\[\s*\]"
 
 
 " Vertical mode
-syn cluster satysfiVert contains=satysfiComment,satysfiVertError,satysfiVertInvoke,satysfiVertEncl,satysfiHorzFromVert
-syn cluster satysfiVertActv contains=satysfiComment,satysfiVertActvError,satysfiVertArgControl,satysfiProgFromVert,satysfiVertEncl,satysfiHorzFromVert
+syn cluster satysfiVert contains=satysfiComment,satysfiVertError,satysfiVertCommand,satysfiVertCommandSection,satysfiVertCommandKnown
+syn cluster satysfiVertActv contains=satysfiCommentVertActv,satysfiVertActvError,satysfiVertArgControl,satysfiProgFromVert,satysfiVertEncl,satysfiHorzFromVert,satysfiVertSemicolon
+syn cluster satysfiVertActv2 contains=satysfiCommentVertActv2,satysfiVertActv2Error,satysfiVertEncl,satysfiHorzFromVert
 
 " Unexpected symbols
-syn match satysfiVertError "[^ \t\r\n%#+<>{]" contained
-syn match satysfiVertActvError "[^ \t\r\n%([{<;]" contained
+syn match satysfiVertError "[^ \t\r\n%#+>]" contained
+syn match satysfiVertActvError "[^ \t\r\n?%([{<;]" contained nextgroup=@satysfiVertActv skipwhite skipempty
+syn match satysfiVertActv2Error "[([]" contained nextgroup=@satysfiVertActv2 skipwhite skipempty
 " # and + must be followed by alpha
 syn match satysfiVertError "[+#][^a-zA-Z]\@=" contained
 " Special error for command names
 syn match satysfiVertError "\\\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" contained
-syn match satysfiVertActvError "[+#\\]\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" contained
+syn match satysfiVertActvError "[+#\\]\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" contained nextgroup=@satysfiVertActv skipwhite skipempty
 
-syn region satysfiVertInvoke contained transparent matchgroup=satysfiVertCommand start="[+#]\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" matchgroup=satysfiVertKeyword end=";\|[}>]\@<=" contains=@satysfiVertActv
-syn region satysfiVertInvoke contained transparent matchgroup=satysfiVertCommandSection start="\%(+section\|+subsection\)\>" matchgroup=satysfiVertKeyword end=";\|[}>]\@<=" contains=@satysfiVertActv
-syn region satysfiVertInvoke contained transparent matchgroup=satysfiVertCommandKnown start="+\%(code\|console\|p\|pn\|listing\|math\)\>" matchgroup=satysfiVertKeyword end=";\|[}>]\@<=" contains=@satysfiVertActv
+syn match satysfiVertCommand "[+#]\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" contained nextgroup=@satysfiVertActv skipwhite skipempty
+syn match satysfiVertCommandSection "\%(+section\|+subsection\)\>" contained nextgroup=@satysfiVertActv skipwhite skipempty
+syn match satysfiVertCommandKnown "+\%(code\|console\|p\|pn\|listing\|math\)\>" contained nextgroup=@satysfiVertActv skipwhite skipempty
 
-syn match satysfiVertArgControl "?:" contained
-syn match satysfiVertArgControl "?\*" contained
+syn match satysfiVertArgControl "?:" contained nextgroup=@satysfiVertActv skipwhite skipempty
+syn match satysfiVertArgControl "?\*" contained nextgroup=@satysfiVertActv skipwhite skipempty
 
-syn region satysfiProgFromVert contained matchgroup=satysfiVertKeyword start="(" matchgroup=satysfiProgKeyword end=")" contains=@satysfiProg
-syn region satysfiProgFromVert contained matchgroup=satysfiVertKeyword start="(|" matchgroup=satysfiProgKeyword end="|)"  contains=@satysfiProg
-syn region satysfiProgFromVert contained matchgroup=satysfiVertKeyword start="\[" matchgroup=satysfiProgKeyword end="\]" contains=@satysfiProg
-syn region satysfiVertEncl contained matchgroup=satysfiVertKeyword start="<" matchgroup=satysfiVertKeyword end=">" contains=@satysfiVert
-syn region satysfiHorzFromVert contained matchgroup=satysfiVertKeyword start="{" matchgroup=satysfiHorzKeyword end="}" contains=@satysfiHorz
+syn region satysfiProgFromVert contained matchgroup=satysfiVertKeyword start="(" matchgroup=satysfiProgKeyword end=")" contains=@satysfiProg nextgroup=@satysfiVertActv skipwhite skipempty
+syn region satysfiProgFromVert contained matchgroup=satysfiVertKeyword start="(|" matchgroup=satysfiProgKeyword end="|)"  contains=@satysfiProg nextgroup=@satysfiVertActv skipwhite skipempty
+syn region satysfiProgFromVert contained matchgroup=satysfiVertKeyword start="\[" matchgroup=satysfiProgKeyword end="\]" contains=@satysfiProg nextgroup=@satysfiVertActv skipwhite skipempty
+syn region satysfiVertEncl contained matchgroup=satysfiVertKeyword start="<" matchgroup=satysfiVertKeyword end=">" contains=@satysfiVert nextgroup=@satysfiVertActv2 skipwhite skipempty
+syn region satysfiHorzFromVert contained matchgroup=satysfiVertKeyword start="{" matchgroup=satysfiHorzKeyword end="}" contains=@satysfiHorz nextgroup=@satysfiVertActv2 skipwhite skipempty
+syn match satysfiVertSemicolon ";" contained
 
 
 
@@ -242,6 +247,9 @@ syn sync minlines=100
 
 
 
+hi def link satysfiCommentVertActv satysfiComment
+hi def link satysfiCommentVertActv2 satysfiComment
+
 " Bind mode-specific names to mode-agnostic names
 hi def link satysfiProgError satysfiError
 hi def link satysfiProgNumber satysfiNumber
@@ -257,13 +265,17 @@ hi def link satysfiProgKnownPackage satysfiKnownPackage
 
 hi def link satysfiVertError satysfiError
 hi def link satysfiVertActvError satysfiError
+hi def link satysfiVertActv2Error satysfiError
+hi def link satysfiVertArgControl satysfiArgControl
 hi def link satysfiVertKeyword satysfiKeyword
 hi def link satysfiVertCommand satysfiCommand
 hi def link satysfiVertCommandKnown satysfiCommandKnown
 hi def link satysfiVertCommandSection satysfiCommandSection
+hi def link satysfiVertSemicolon satysfiKeyword
 
 hi def link satysfiHorzError satysfiError
 hi def link satysfiHorzActvError satysfiError
+hi def link satysfiHorzArgControl satysfiArgControl
 hi def link satysfiHorzKeyword satysfiKeyword
 hi def link satysfiHorzOperator satysfiOperator
 hi def link satysfiHorzCommand satysfiCommand
