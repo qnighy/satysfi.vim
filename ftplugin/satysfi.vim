@@ -1,1 +1,1 @@
-set matchpairs+=<:>
+setlocal matchpairs+=<:>
