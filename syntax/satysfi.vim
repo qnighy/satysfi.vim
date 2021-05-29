@@ -48,7 +48,7 @@ syn region satysfiLiteral start="```````````" end="```````````"
 
 
 " Program mode
-syn cluster satysfiProg contains=satysfiComment,satysfiLiteral,satysfiProgIdentifier,satysfiProgConstructor,satysfiProgTypevar,satysfiProgError,satysfiProgHeadRequire,satysfiProgHeadImport,satysfiProgNumber,satysfiProgLength,satysfiProgOperator,satysfiProgKeyword,satysfiProgType,satysfiProgArgControl,satysfiProgModule,satysfiProgCommand,satysfiProgEncl,satysfiVertFromProg,satysfiHorzFromProg,satysfiMathListFromProg,satysfiMathFromProg
+syn cluster satysfiProg contains=satysfiComment,satysfiLiteral,satysfiProgIdentifier,satysfiProgConstructor,satysfiProgTypevar,satysfiProgError,satysfiProgHeadRequire,satysfiProgHeadImport,satysfiProgNumber,satysfiProgLength,satysfiProgOperator,satysfiProgKeyword,satysfiProgType,satysfiProgArgControl,satysfiProgModule,satysfiProgCommand,satysfiProgEncl,satysfiVertFromProg,satysfiHorzFromProg,satysfiEmptyMathListFromProg,satysfiMathListFromProg,satysfiMathFromProg
 
 " '@' must form a valid header
 syn match satysfiProgError "@[a-z]*[^a-z]\@="
@@ -135,6 +135,7 @@ syn region satysfiVertFromProg matchgroup=satysfiProgKeyword start="'<" matchgro
 syn region satysfiHorzFromProg matchgroup=satysfiProgKeyword start="{" matchgroup=satysfiHorzKeyword end="}" contains=@satysfiHorz
 syn region satysfiMathFromProg matchgroup=satysfiProgKeyword start="\${" matchgroup=satysfiMathKeyword end="}" contains=@satysfiMath
 syn region satysfiMathListFromProg matchgroup=satysfiProgKeyword start="\${[ \t\n\r]*|" matchgroup=satysfiMathKeyword end="|[ \t\n\r]*}" contains=@satysfiMathWithSep
+syn match satysfiEmptyMathListFromProg "\${[ \t\n\r]*|[ \t\n\r]*}"
 
 syn match satysfiProgConstructor  "()"
 syn match satysfiProgConstructor  "(|\s*|)"
@@ -174,7 +175,7 @@ syn match satysfiVertSemicolon ";" contained
 
 
 " Horizontal mode
-syn cluster satysfiHorz contains=satysfiComment,satysfiLiteral,satysfiHorzError,satysfiHorzCommand,satysfiHorzCommandSection,satysfiHorzCommandKnown,satysfiHorzOperator,satysfiHorzEscape,satysfiMathListFromHorz,satysfiMathFromHorz,@Spell
+syn cluster satysfiHorz contains=satysfiComment,satysfiLiteral,satysfiHorzError,satysfiHorzCommand,satysfiHorzCommandSection,satysfiHorzCommandKnown,satysfiHorzOperator,satysfiHorzEscape,satysfiMathListFromHorz,satysfiEmptyMathListFromHorz,satysfiMathFromHorz,@Spell
 syn cluster satysfiHorzActv contains=satysfiCommentHorzActv,satysfiHorzActvError,satysfiHorzArgControl,satysfiProgFromHorz,satysfiVertFromHorz,satysfiHorzEncl,satysfiHorzSemicolon
 syn cluster satysfiHorzActv2 contains=satysfiCommentHorzActv2,satysfiHorzActv2Error,satysfiVertFromHorz,satysfiHorzEncl
 
@@ -208,6 +209,7 @@ syn region satysfiVertFromHorz contained matchgroup=satysfiHorzKeyword start="<"
 syn region satysfiHorzEncl contained matchgroup=satysfiHorzKeyword start="{" matchgroup=satysfiHorzKeyword end="}" contains=@satysfiHorz nextgroup=@satysfiHorzActv2 skipwhite skipempty
 syn region satysfiMathFromHorz contained matchgroup=satysfiHorzKeyword start="\${" matchgroup=satysfiMathKeyword end="}" contains=@satysfiMath
 syn region satysfiMathListFromHorz contained matchgroup=satysfiHorzKeyword start="\${|[ \t\n\r]*" matchgroup=satysfiMathKeyword end="|[ \t\n\r]*}" contains=@satysfiMathWithSep
+syn match satysfiEmptyMathListFromHorz "\${[ \t\n\r]*|[ \t\n\r]*}" contained
 syn match satysfiHorzSemicolon ";" contained
 
 " Errors in HorzActv have to have higher precedence.
@@ -282,6 +284,7 @@ hi def link satysfiProgArgControl satysfiArgControl
 hi def link satysfiProgModule satysfiModule
 hi def link satysfiProgCommand satysfiCommand
 hi def link satysfiProgKnownPackage satysfiKnownPackage
+hi def link satysfiEmptyMathListFromProg satysfiProgKeyword
 
 hi def link satysfiVertError satysfiError
 hi def link satysfiVertActvError satysfiError
