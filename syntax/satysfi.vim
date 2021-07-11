@@ -48,7 +48,7 @@ syn region satysfiLiteral start="```````````" end="```````````"
 
 
 " Program mode
-syn cluster satysfiProg contains=satysfiComment,satysfiLiteral,satysfiProgIdentifier,satysfiProgConstructor,satysfiProgTypevar,satysfiProgError,satysfiProgHeadRequire,satysfiProgHeadImport,satysfiProgNumber,satysfiProgLength,satysfiProgOperator,satysfiProgKeyword,satysfiProgType,satysfiProgArgControl,satysfiProgModule,satysfiProgCommand,satysfiProgEncl,satysfiVertFromProg,satysfiHorzFromProg,satysfiEmptyMathListFromProg,satysfiMathListFromProg,satysfiMathFromProg
+syn cluster satysfiProg contains=satysfiComment,satysfiLiteral,satysfiProgIdentifier,satysfiProgConstructor,satysfiProgTypevar,satysfiProgError,satysfiProgHeadRequire,satysfiProgHeadImport,satysfiProgNumber,satysfiProgLength,satysfiProgOperator,satysfiProgKeyword,satysfiProgType,satysfiProgArgControl,satysfiProgModule,satysfiProgCommand,satysfiProgEncl,satysfiVertFromProg,satysfiHorzFromProg,satysfiMathListFromProg,satysfiMathFromProg
 
 " '@' must form a valid header
 syn match satysfiProgError "@[a-z]*[^a-z]\@="
@@ -133,9 +133,9 @@ syn region satysfiProgEncl transparent matchgroup=satysfiProgKeyword start="\[" 
 syn region satysfiProgEncl transparent matchgroup=satysfiProgKeyword start="<\[" matchgroup=satysfiProgKeyword end="\]>" contains=@satysfiProg
 syn region satysfiVertFromProg matchgroup=satysfiProgKeyword start="'<" matchgroup=satysfiVertKeyword end=">" contains=@satysfiVert
 syn region satysfiHorzFromProg matchgroup=satysfiProgKeyword start="{" matchgroup=satysfiHorzKeyword end="}" contains=@satysfiHorz
-syn region satysfiMathFromProg matchgroup=satysfiProgKeyword start="\${" matchgroup=satysfiMathKeyword end="}" contains=@satysfiMath
+syn region satysfiMathFromProg matchgroup=satysfiProgKeyword start="\${" matchgroup=satysfiMathKeyword end="}" contains=@satysfiMathWithoutSep
 syn region satysfiMathListFromProg matchgroup=satysfiProgKeyword start="\${[ \t\n\r]*|" matchgroup=satysfiMathKeyword end="|[ \t\n\r]*}" contains=@satysfiMathWithSep
-syn match satysfiEmptyMathListFromProg "\${[ \t\n\r]*|[ \t\n\r]*}"
+syn match satysfiMathListFromProg "\${[ \t\n\r]*|[ \t\n\r]*}"
 
 syn match satysfiProgConstructor  "()"
 syn match satysfiProgConstructor  "(|\s*|)"
@@ -175,7 +175,7 @@ syn match satysfiVertSemicolon ";" contained
 
 
 " Horizontal mode
-syn cluster satysfiHorz contains=satysfiComment,satysfiLiteral,satysfiHorzError,satysfiHorzCommand,satysfiHorzCommandSection,satysfiHorzCommandKnown,satysfiHorzOperator,satysfiHorzEscape,satysfiMathListFromHorz,satysfiEmptyMathListFromHorz,satysfiMathFromHorz,@Spell
+syn cluster satysfiHorz contains=satysfiComment,satysfiLiteral,satysfiHorzError,satysfiHorzCommand,satysfiHorzCommandSection,satysfiHorzCommandKnown,satysfiHorzOperator,satysfiHorzEscape,satysfiMathListFromHorz,satysfiMathFromHorz,@Spell
 syn cluster satysfiHorzActv contains=satysfiCommentHorzActv,satysfiHorzActvError,satysfiHorzArgControl,satysfiProgFromHorz,satysfiVertFromHorz,satysfiHorzEncl,satysfiHorzSemicolon
 syn cluster satysfiHorzActv2 contains=satysfiCommentHorzActv2,satysfiHorzActv2Error,satysfiVertFromHorz,satysfiHorzEncl
 
@@ -207,9 +207,9 @@ syn region satysfiProgFromHorz contained matchgroup=satysfiHorzKeyword start="(|
 syn region satysfiProgFromHorz contained matchgroup=satysfiHorzKeyword start="\[" matchgroup=satysfiProgKeyword end="\]" contains=@satysfiProg nextgroup=@satysfiHorzActv skipwhite skipempty
 syn region satysfiVertFromHorz contained matchgroup=satysfiHorzKeyword start="<" matchgroup=satysfiVertKeyword end=">" contains=@satysfiVert nextgroup=@satysfiHorzActv2 skipwhite skipempty
 syn region satysfiHorzEncl contained matchgroup=satysfiHorzKeyword start="{" matchgroup=satysfiHorzKeyword end="}" contains=@satysfiHorz nextgroup=@satysfiHorzActv2 skipwhite skipempty
-syn region satysfiMathFromHorz contained matchgroup=satysfiHorzKeyword start="\${" matchgroup=satysfiMathKeyword end="}" contains=@satysfiMath
+syn region satysfiMathFromHorz contained matchgroup=satysfiHorzKeyword start="\${" matchgroup=satysfiMathKeyword end="}" contains=@satysfiMathWithoutSep
 syn region satysfiMathListFromHorz contained matchgroup=satysfiHorzKeyword start="\${|[ \t\n\r]*" matchgroup=satysfiMathKeyword end="|[ \t\n\r]*}" contains=@satysfiMathWithSep
-syn match satysfiEmptyMathListFromHorz "\${[ \t\n\r]*|[ \t\n\r]*}" contained
+syn match satysfiMathListFromHorz "\${[ \t\n\r]*|[ \t\n\r]*}" contained
 syn match satysfiHorzSemicolon ";" contained
 
 " Errors in HorzActv have to have higher precedence.
@@ -220,11 +220,11 @@ syn match satysfiHorzActvError "[+#\\]\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z
 
 
 " Math mode
-syn cluster satysfiMath contains=satysfiComment,satysfiMathListSep,satysfiMathError,satysfiMathOperator,satysfiMathIdentifier,satysfiMathHashVariable,satysfiMathCommand,satysfiMathCommandKnown,satysfiMathEscape,satysfiProgFromMath,satysfiVertFromMath,satysfiHorzFromMath,satysfiMathEncl
+syn cluster satysfiMathBase contains=satysfiComment,satysfiMathSubscript,satysfiMathSupscript,satysfiMathOperator,satysfiMathIdentifier,satysfiMathHashVariable,satysfiMathCommand,satysfiMathCommandKnown,satysfiMathEscape,@satysfiStrayMathArg
+syn cluster satysfiMathWithoutSep contains=@satysfiMathBase,satysfiMathError
+syn cluster satysfiMathWithSep    contains=@satysfiMathBase,satysfiMathErrorExceptVBar,satysfiMathListSep
 
-syn cluster satysfiMathWithSep contains=satysfiComment,satysfiMathListSep,satysfiMathErrorExceptVBar,satysfiMathOperator,satysfiMathIdentifier,satysfiMathHashVariable,satysfiMathCommand,satysfiMathCommandKnown,satysfiMathEscape,satysfiProgFromMath,satysfiVertFromMath,satysfiHorzFromMath,satysfiMathEncl
-
-syn match satysfiMathListSep "|"
+syn match satysfiMathListSep "|" contained
 
 " Unexpected symbols
 syn match satysfiMathError "[][|()"#$&;@]" contained
@@ -233,23 +233,42 @@ syn match satysfiMathErrorExceptVBar "[][()"#$&;@]" contained
 syn match satysfiMathError "![^{<([]\@=" contained
 syn match satysfiMathErrorExceptVBar "![^{<([]\@=" contained
 
-syn match satysfiMathOperator "\^" contained
-syn match satysfiMathOperator "_" contained
+syn match satysfiMathSupscript "\^" contained nextgroup=satysfiMathEncl skipwhite skipempty
+syn match satysfiMathSubscript "_" contained nextgroup=satysfiMathEncl skipwhite skipempty
 syn match satysfiMathOperator "[-+*/:=<>~'.,?`]\+" contained
 syn match satysfiMathIdentifier "[a-zA-Z0-9]" contained
 syn match satysfiMathHashVariable "#\%([A-Z][-a-zA-Z0-9]*\.\)*[a-zA-Z][-a-zA-Z0-9]*" contained
-syn match satysfiMathCommand "\\[a-zA-Z][-a-zA-Z0-9]*" contained
-syn match satysfiMathCommandKnown "\\\%(Gamma\|angle\|app\|brace\|derive\|frac\|infty\|int\|lambda\|ldots\|lim\|lower\|math-color\|math-skip\|mathbin\|mathord\|mathrel\|ordd\|paren\|pi\|pm\|sqrt\|sum\|tau\|to\|upper\)\>" contained
-syn match satysfiMathCommandStyle "\\\%(bm\|math-style\|mathrm\|text\)\>" contained
 syn match satysfiMathEscape "\\[ -@[-`{-~]" contained
 
-syn region satysfiProgFromMath contained transparent matchgroup=satysfiMathKeyword start="!(" matchgroup=satysfiProgKeyword end=")" contains=@satysfiProg
-syn region satysfiProgFromMath contained transparent matchgroup=satysfiMathKeyword start="!(|" matchgroup=satysfiProgKeyword end="|)"  contains=@satysfiProg
-syn region satysfiProgFromMath contained transparent matchgroup=satysfiMathKeyword start="!\[" matchgroup=satysfiProgKeyword end="\]" contains=@satysfiProg
-syn region satysfiVertFromMath contained matchgroup=satysfiMathKeyword start="!<" matchgroup=satysfiVertKeyword end=">" contains=@satysfiVert
-syn region satysfiHorzFromMath contained matchgroup=satysfiMathKeyword start="!{" matchgroup=satysfiHorzKeyword end="}" contains=@satysfiHorz
-syn region satysfiMathEncl contained matchgroup=satysfiMathKeyword start="{" matchgroup=satysfiMathKeyword end="}" contains=@satysfiMath
+syn match satysfiMathCommand "\\[a-zA-Z][-a-zA-Z0-9]*" contained nextgroup=@satysfiMathArg skipwhite skipempty
+syn match satysfiMathCommandKnown "\\\%(Gamma\|angle\|app\|brace\|derive\|frac\|infty\|int\|lambda\|ldots\|lim\|lower\|math-color\|math-skip\|mathbin\|mathord\|mathrel\|ordd\|paren\|pi\|pm\|sqrt\|sum\|tau\|to\|upper\)\>" contained nextgroup=@satysfiMathArg skipwhite skipempty
+syn match satysfiMathCommandStyle "\\\%(bm\|math-style\|mathrm\|text\)\>" contained nextgroup=@satysfiMathArg skipwhite skipempty
 
+" Braces and other argument patterns in math region
+" 0. Argument controls
+syn match satysfiMathOptArg   "?:"  contained nextgroup=@satysfiMathArg,satysfiMathAnythingElse skipwhite skipempty
+syn match satysfiMathNoOptArg "?\*" contained nextgroup=@satysfiMathArg skipwhite skipempty
+syn match satysfiMathAnythingElse "[^ \t\n\r]" contained
+" 1. Proper arguments
+syn cluster satysfiMathArg contains=satysfiProgFromMath,satysfiVertFromMath,satysfiHorzFromMath,satysfiMathEncl,satysfiMathListEncl,satysfiMathOptArg,satysfiMathNoOptArg
+syn region  satysfiProgFromMath contained transparent matchgroup=satysfiMathKeyword start="!(" matchgroup=satysfiProgKeyword end=")" contains=@satysfiProg nextgroup=@satysfiMathArg skipwhite skipempty
+syn region  satysfiProgFromMath contained transparent matchgroup=satysfiMathKeyword start="!(|" matchgroup=satysfiProgKeyword end="|)"  contains=@satysfiProg nextgroup=@satysfiMathArg skipwhite skipempty
+syn region  satysfiProgFromMath contained transparent matchgroup=satysfiMathKeyword start="!\[" matchgroup=satysfiProgKeyword end="\]" contains=@satysfiProg nextgroup=@satysfiMathArg skipwhite skipempty
+syn region  satysfiVertFromMath contained matchgroup=satysfiMathKeyword start="!<" matchgroup=satysfiVertKeyword end=">" contains=@satysfiVert nextgroup=@satysfiMathArg skipwhite skipempty
+syn region  satysfiHorzFromMath contained matchgroup=satysfiMathKeyword start="!{" matchgroup=satysfiHorzKeyword end="}" contains=@satysfiHorz nextgroup=@satysfiMathArg skipwhite skipempty
+syn region  satysfiMathEncl contained matchgroup=satysfiMathKeyword start="{" matchgroup=satysfiMathKeyword end="}" contains=@satysfiMathWithoutSep nextgroup=@satysfiMathArg skipwhite skipempty
+syn region  satysfiMathListEncl contained matchgroup=satysfiMathKeyword start="{[ \t\n\r]*|" matchgroup=satysfiMathKeyword end="|[ \t\n\r]*}" contains=@satysfiMathWithSep nextgroup=@satysfiMathArg skipwhite skipempty
+syn match   satysfiMathListEncl contained "{[ \t\n\r]*|[ \t\n\r]*}" nextgroup=@satysfiMathArg skipwhite skipempty
+" 2. Inproper (stray) arguments (the patterns are identical to 1.)
+syn cluster satysfiStrayMathArg contains=satysfiStrayProgFromMath,satysfiStrayVertFromMath,satysfiStrayHorzFromMath,satysfiStrayMathEncl,satysfiStrayMathListEncl
+syn region  satysfiStrayProgFromMath contained transparent matchgroup=satysfiMathError start="!(" matchgroup=satysfiMathError end=")" contains=@satysfiProg
+syn region  satysfiStrayProgFromMath contained transparent matchgroup=satysfiMathError start="!(|" matchgroup=satysfiMathError end="|)"  contains=@satysfiProg
+syn region  satysfiStrayProgFromMath contained transparent matchgroup=satysfiMathError start="!\[" matchgroup=satysfiMathError end="\]" contains=@satysfiProg
+syn region  satysfiStrayVertFromMath contained matchgroup=satysfiMathError start="!<" matchgroup=satysfiMathError end=">" contains=@satysfiVert
+syn region  satysfiStrayHorzFromMath contained matchgroup=satysfiMathError start="!{" matchgroup=satysfiMathError end="}" contains=@satysfiHorz
+syn region  satysfiStrayMathEncl contained matchgroup=satysfiMathError start="{" matchgroup=satysfiMathError end="}" contains=@satysfiMathWithoutSep
+syn region  satysfiStrayMathListEncl contained matchgroup=satysfiMathError start="{[ \t\n\r]*|" matchgroup=satysfiMathError end="|[ \t\n\r]*}" contains=@satysfiMathWithSep
+syn match   satysfiStrayMathListEncl contained "{[ \t\n\r]*|[ \t\n\r]*}"
 
 
 " Sync heuristics
@@ -284,7 +303,7 @@ hi def link satysfiProgArgControl satysfiArgControl
 hi def link satysfiProgModule satysfiModule
 hi def link satysfiProgCommand satysfiCommand
 hi def link satysfiProgKnownPackage satysfiKnownPackage
-hi def link satysfiEmptyMathListFromProg satysfiProgKeyword
+hi def link satysfiMathListFromProg satysfiProgKeyword
 
 hi def link satysfiVertError satysfiError
 hi def link satysfiVertActvError satysfiError
@@ -308,13 +327,21 @@ hi def link satysfiHorzSemicolon satysfiKeyword
 hi def link satysfiHorzEscape satysfiEscape
 
 hi def link satysfiMathError satysfiError
+hi def link satysfiMathErrorExceptVBar satysfiError
 hi def link satysfiMathKeyword satysfiKeyword
+hi def link satysfiMathSupscript satysfiKeyword
+hi def link satysfiMathSubscript satysfiKeyword
 hi def link satysfiMathOperator satysfiOperator
 hi def link satysfiMathHashVariable satysfiHashVariable
 hi def link satysfiMathCommand satysfiCommand
 hi def link satysfiMathCommandKnown satysfiCommandKnown
 hi def link satysfiMathCommandStyle satysfiCommandStyle
 hi def link satysfiMathEscape satysfiEscape
+hi def link satysfiMathListEncl satysfiMathKeyword
+hi def link satysfiStrayMathListEncl satysfiMathError
+hi def link satysfiMathOptArg satysfiArgControl
+hi def link satysfiMathNoOptArg satysfiArgControl
+hi def link satysfiMathAnythingElse satysfiMathError
 
 " Now we can link them with predefined groups.
 hi def link satysfiError Error
