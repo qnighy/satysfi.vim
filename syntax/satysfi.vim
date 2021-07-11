@@ -57,7 +57,7 @@ syn keyword satysfiProgKeyword true false while do let-mutable
 syn keyword satysfiProgKeyword match with when as type of module struct sig
 syn keyword satysfiProgKeyword val end direct constraint
 syn keyword satysfiProgKeyword let-inline let-block let-math controls cycle
-syn keyword satysfiProgKeyword command
+syn keyword satysfiProgKeyword command open
 syn keyword satysfiProgType inline-cmd block-cmd math-cmd
 " Not really a keyword, but resolved by the compiler
 syn keyword satysfiProgType list ref
