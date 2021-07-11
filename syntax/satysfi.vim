@@ -33,22 +33,10 @@ syn region satysfiCommentHorzActv2 start="%" end="$" contains=satysfiCommentTodo
 
 syn keyword satysfiCommentTodo contained TODO FIXME XXX NB NOTE
 
-syn region satysfiLiteral start="`" end="`"
-syn region satysfiLiteral start="``" end="``"
-syn region satysfiLiteral start="```" end="```"
-syn region satysfiLiteral start="````" end="````"
-syn region satysfiLiteral start="`````" end="`````"
-syn region satysfiLiteral start="``````" end="``````"
-syn region satysfiLiteral start="```````" end="```````"
-syn region satysfiLiteral start="````````" end="````````"
-syn region satysfiLiteral start="`````````" end="`````````"
-syn region satysfiLiteral start="``````````" end="``````````"
-syn region satysfiLiteral start="```````````" end="```````````"
-
 
 
 " Program mode
-syn cluster satysfiProg contains=satysfiComment,satysfiLiteral,satysfiProgIdentifier,satysfiProgConstructor,satysfiProgTypevar,satysfiProgError,satysfiProgHeadRequire,satysfiProgHeadImport,satysfiProgNumber,satysfiProgLength,satysfiProgOperator,satysfiProgKeyword,satysfiProgType,satysfiProgArgControl,satysfiProgModule,satysfiProgCommand,satysfiProgEncl,satysfiVertFromProg,satysfiHorzFromProg,satysfiMathListFromProg,satysfiMathFromProg
+syn cluster satysfiProg contains=satysfiComment,satysfiStrLiteral,satysfiStrLiteralWithPos,satysfiProgIdentifier,satysfiProgConstructor,satysfiProgTypevar,satysfiProgError,satysfiProgHeadRequire,satysfiProgHeadImport,satysfiProgNumber,satysfiProgLength,satysfiProgOperator,satysfiProgKeyword,satysfiProgType,satysfiProgArgControl,satysfiProgModule,satysfiProgCommand,satysfiProgEncl,satysfiVertFromProg,satysfiHorzFromProg,satysfiMathListFromProg,satysfiMathFromProg
 
 " '@' must form a valid header
 syn match satysfiProgError "@[a-z]*[^a-z]\@="
@@ -141,6 +129,31 @@ syn match satysfiProgConstructor  "()"
 syn match satysfiProgConstructor  "(|\s*|)"
 syn match satysfiProgConstructor  "\[\s*\]"
 
+" The string literal patterns must be defined after satysfiProgOperator in
+" order to prevent '#' right before string literal from greedily detected as
+" an operator.
+syn region satysfiStrLiteral start="\#\?`" end="`\#\?"
+syn region satysfiStrLiteral start="\#\?``" end="``\#\?"
+syn region satysfiStrLiteral start="\#\?```" end="```\#\?"
+syn region satysfiStrLiteral start="\#\?````" end="````\#\?"
+syn region satysfiStrLiteral start="\#\?`````" end="`````\#\?"
+syn region satysfiStrLiteral start="\#\?``````" end="``````\#\?"
+syn region satysfiStrLiteral start="\#\?```````" end="```````\#\?"
+syn region satysfiStrLiteral start="\#\?````````" end="````````\#\?"
+syn region satysfiStrLiteral start="\#\?`````````" end="`````````\#\?"
+syn region satysfiStrLiteral start="\#\?``````````" end="``````````\#\?"
+syn region satysfiStrLiteral start="\#\?```````````" end="```````````\#\?"
+syn region satysfiStrLiteralWithPos start="@\?`" end="`\#\?"
+syn region satysfiStrLiteralWithPos start="@\?``" end="``\#\?"
+syn region satysfiStrLiteralWithPos start="@\?```" end="```\#\?"
+syn region satysfiStrLiteralWithPos start="@\?````" end="````\#\?"
+syn region satysfiStrLiteralWithPos start="@\?`````" end="`````\#\?"
+syn region satysfiStrLiteralWithPos start="@\?``````" end="``````\#\?"
+syn region satysfiStrLiteralWithPos start="@\?```````" end="```````\#\?"
+syn region satysfiStrLiteralWithPos start="@\?````````" end="````````\#\?"
+syn region satysfiStrLiteralWithPos start="@\?`````````" end="`````````\#\?"
+syn region satysfiStrLiteralWithPos start="@\?``````````" end="``````````\#\?"
+syn region satysfiStrLiteralWithPos start="@\?```````````" end="```````````\#\?"
 
 
 " Vertical mode
@@ -175,7 +188,7 @@ syn match satysfiVertSemicolon ";" contained
 
 
 " Horizontal mode
-syn cluster satysfiHorz contains=satysfiComment,satysfiLiteral,satysfiHorzError,satysfiHorzCommand,satysfiHorzCommandSection,satysfiHorzCommandKnown,satysfiHorzOperator,satysfiHorzEscape,satysfiMathListFromHorz,satysfiMathFromHorz,@Spell
+syn cluster satysfiHorz contains=satysfiComment,satysfiStrLiteral,satysfiHorzError,satysfiHorzCommand,satysfiHorzCommandSection,satysfiHorzCommandKnown,satysfiHorzOperator,satysfiHorzEscape,satysfiMathListFromHorz,satysfiMathFromHorz,@Spell
 syn cluster satysfiHorzActv contains=satysfiCommentHorzActv,satysfiHorzActvError,satysfiHorzArgControl,satysfiProgFromHorz,satysfiVertFromHorz,satysfiHorzEncl,satysfiHorzSemicolon
 syn cluster satysfiHorzActv2 contains=satysfiCommentHorzActv2,satysfiHorzActv2Error,satysfiVertFromHorz,satysfiHorzEncl
 
@@ -304,6 +317,8 @@ hi def link satysfiProgModule satysfiModule
 hi def link satysfiProgCommand satysfiCommand
 hi def link satysfiProgKnownPackage satysfiKnownPackage
 hi def link satysfiMathListFromProg satysfiProgKeyword
+hi def link satysfiStrLiteral satysfiLiteral
+hi def link satysfiStrLiteralWithPos satysfiLiteral
 
 hi def link satysfiVertError satysfiError
 hi def link satysfiVertActvError satysfiError
