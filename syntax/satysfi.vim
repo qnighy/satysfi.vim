@@ -51,6 +51,8 @@ syn match satysfiProgIdentifier "\<[a-z][-a-zA-Z0-9]*\>"
 syn match satysfiProgConstructor "\<[A-Z][-a-zA-Z0-9]*\>"
 syn match satysfiProgTypevar "'[a-z][-a-zA-Z0-9]*\>"
 
+" The following keywords and its references are as of 2960f11.
+" Predefined keywords in src/frontend/lexer.mll, line 291-
 syn keyword satysfiProgOperator not mod before
 syn keyword satysfiProgKeyword if then else let let-rec and in fun
 syn keyword satysfiProgKeyword true false while do let-mutable
@@ -59,16 +61,19 @@ syn keyword satysfiProgKeyword val end direct constraint
 syn keyword satysfiProgKeyword let-inline let-block let-math controls cycle
 syn keyword satysfiProgKeyword command open
 syn keyword satysfiProgType inline-cmd block-cmd math-cmd
-" Not really a keyword, but resolved by the compiler
+" Not really a keyword, but resolved by the compiler, in src/frontend/typeenv.ml, line 527-.
 syn keyword satysfiProgType list ref
-" Predefined by the compiler (base_type_hash_table)
+" Predefined by the compiler (base_type_hash_table), in src/frontend/types.cppo.ml, line 284-.
 syn keyword satysfiProgType unit bool int float length string inline-text
 syn keyword satysfiProgType block-text inline-boxes block-boxes context
 syn keyword satysfiProgType pre-path path graphics image document math
-" Predefined by the compiler (add_default_types)
-syn keyword satysfiProgType option itemize color script language page
-syn keyword satysfiProgType math-class math-char-class cell deco deco-set
+syn keyword satysfiProgType regex text-info input-position
+" Predefined by the compiler (add_default_types), in src/frontend/primitives.cppo.ml, line 166-.
+syn keyword satysfiProgType option itemize color math-class math-char-class
+" Predefined by the compiler (add_default_types), in src/frontend/primitives.cppo.ml, line 199-.
+syn keyword satysfiProgType color script language page cell deco deco-set
 syn keyword satysfiProgType inline-graphics
+
 syn region satysfiProgHeadRequire matchgroup=satysfiProgKeyword start="@require:" matchgroup=NONE end="$" contains=satysfiProgKnownPackage
 syn region satysfiProgHeadImport matchgroup=satysfiProgKeyword start="@import:" matchgroup=NONE end="$"
 syn keyword satysfiProgKnownPackage contained code color deco gr hdecoset itemize list math mitou-report pervasives proof stdja stdjabook tabular vdecoset
