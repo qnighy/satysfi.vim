@@ -72,6 +72,9 @@ syn keyword satysfiProgType inline-graphics
 syn region satysfiProgHeadRequire matchgroup=satysfiProgKeyword start="@require:" matchgroup=NONE end="$" contains=satysfiProgKnownPackage
 syn region satysfiProgHeadImport matchgroup=satysfiProgKeyword start="@import:" matchgroup=NONE end="$"
 syn keyword satysfiProgKnownPackage contained code color deco gr hdecoset itemize list math mitou-report pervasives proof stdja stdjabook tabular vdecoset
+syn region satysfiProgHeadStage matchgroup=satysfiProgKeyword start="@stage: *" matchgroup=NONE end="$" contains=satysfiProgStage,satysfiProgInvalidStage
+syn match satysfiProgInvalidStage contained "."
+syn match satysfiProgStage contained "persistent\|0\|1"
 
 syn match satysfiProgNumber "0\|[1-9][0-9]*"
 syn match satysfiProgNumber "0[xX][0-9a-fA-F]\+"
@@ -316,6 +319,8 @@ hi def link satysfiProgArgControl satysfiArgControl
 hi def link satysfiProgModule satysfiModule
 hi def link satysfiProgCommand satysfiCommand
 hi def link satysfiProgKnownPackage satysfiKnownPackage
+hi def link satysfiProgStage satysfiStage
+hi def link satysfiProgInvalidStage satysfiProgError
 hi def link satysfiMathListFromProg satysfiProgKeyword
 hi def link satysfiStrLiteral satysfiLiteral
 hi def link satysfiStrLiteralWithPos satysfiLiteral
@@ -360,6 +365,7 @@ hi def link satysfiMathAnythingElse satysfiMathError
 
 " Now we can link them with predefined groups.
 hi def link satysfiError Error
+hi def link satysfiStage Special
 hi def link satysfiKeyword Keyword
 hi def link satysfiNumber Number
 hi def link satysfiLength Number
