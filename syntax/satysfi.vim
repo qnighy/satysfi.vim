@@ -81,11 +81,14 @@ syn region satysfiProgHeadStage matchgroup=satysfiProgKeyword start="@stage: *" 
 syn match satysfiProgInvalidStage contained "."
 syn match satysfiProgStage contained "persistent\|0\|1"
 
-syn match satysfiProgNumber "0\|[1-9][0-9]*"
+syn match satysfiProgNumber "0\|[1-9][0-9]*" nextgroup=satysfiLengthError,satysfiLengthUnit
 syn match satysfiProgNumber "0[xX][0-9a-fA-F]\+"
-syn match satysfiProgNumber "[0-9]\+\.[0-9]*\|\.[0-9]\+"
-syn match satysfiProgLength "\%(0\|[1-9][0-9]*\)[a-z][-a-zA-Z0-9]*"
-syn match satysfiProgLength "\%([0-9]\+\.[0-9]*\|\.[0-9]\+\)[a-z][-a-zA-Z0-9]*"
+syn match satysfiProgNumber "[0-9]\+\.[0-9]*\|\.[0-9]\+" nextgroup=satysfiLengthError,satysfiLengthUnit
+" syn match satysfiProgLength "\%(0\|[1-9][0-9]*\)[a-z][-a-zA-Z0-9]*"
+" Known units are defined outside parser at line 623 of
+" src/frontend/typechecker.ml
+syn match satysfiLengthError contained "[a-z][-a-zA-Z0-9]*"
+syn match satysfiLengthUnit contained "\%(pt\|cm\|mm\|inch\)\>"
 
 syn match satysfiProgOperator  ";"
 syn match satysfiProgOperator  "#"
@@ -373,7 +376,8 @@ hi def link satysfiError Error
 hi def link satysfiStage Special
 hi def link satysfiKeyword Keyword
 hi def link satysfiNumber Number
-hi def link satysfiLength Number
+hi def link satysfiLengthError satysfiError
+hi def link satysfiLengthUnit satysfiNumber
 hi def link satysfiConstructor Constant
 hi def link satysfiFunDef Keyword
 hi def link satysfiOperator Keyword
